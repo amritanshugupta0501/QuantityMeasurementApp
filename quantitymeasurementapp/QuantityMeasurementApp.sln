@@ -4,6 +4,8 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementApp", "QuantityMeasurementApp.csproj", "{7974F22C-0322-9893-0B58-EF67E60E7AC1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementApp.Tests", "QuantityMeasurementApp.Tests\QuantityMeasurementApp.Tests.csproj", "{9A85D33D-0433-4BA4-1C69-FG78F71F8BD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,6 +16,10 @@ Global
 		{7974F22C-0322-9893-0B58-EF67E60E7AC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7974F22C-0322-9893-0B58-EF67E60E7AC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7974F22C-0322-9893-0B58-EF67E60E7AC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A85D33D-0433-4BA4-1C69-FG78F71F8BD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A85D33D-0433-4BA4-1C69-FG78F71F8BD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A85D33D-0433-4BA4-1C69-FG78F71F8BD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A85D33D-0433-4BA4-1C69-FG78F71F8BD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

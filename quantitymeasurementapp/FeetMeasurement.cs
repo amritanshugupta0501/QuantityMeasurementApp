@@ -3,7 +3,7 @@ using System;
 namespace QuantityMeasurementApp
 {
     // UC - 01 : Checking the equality of two numerical values measured in feet
-    class FeetMeasurement
+    public class FeetMeasurement
     {
         private readonly double _valueInFeet;
         // Constructor saves the provided value.
