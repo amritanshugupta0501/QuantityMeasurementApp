@@ -78,11 +78,10 @@ namespace QuantityMeasurementApp.Tests
         }
 
         [Test]
-        public void Given2Point54CentimetresAnd1InchWhenComparedShouldReturnTrue()
+        public void Convert_2Point54CentimetresToInches_ReturnsApproximatelyOne()
         {
-            var cm = new QuantityMeasurement(2.54, MeasurementUnit.CENTIMETRE);
-            var inch = new QuantityMeasurement(1.0, MeasurementUnit.INCH);
-            Assert.That(cm.Equals(inch), Is.True);
+            double result = QuantityMeasurement.Convert(2.54, MeasurementUnit.CENTIMETRE, MeasurementUnit.INCH);
+            Assert.That(result, Is.EqualTo(1.0).Within(1e-6));
         }
 
         [Test]
@@ -91,6 +90,47 @@ namespace QuantityMeasurementApp.Tests
             var cm = new QuantityMeasurement(1.0, MeasurementUnit.CENTIMETRE);
             var inch = new QuantityMeasurement(1.0, MeasurementUnit.INCH);
             Assert.That(cm.Equals(inch), Is.False);
+        }
+
+        // ---------- UC5: conversion api tests ----------
+
+        [Test]
+        public void StaticConvert_OneFootToInches_ReturnsTwelve()
+        {
+            double result = QuantityMeasurement.Convert(1.0, MeasurementUnit.FEET, MeasurementUnit.INCH);
+            Assert.That(result, Is.EqualTo(12.0));
+        }
+        [Test]
+        public void InstanceConvert_OneYardToInches_ReturnsThirtySix()
+        {
+            var yard = new QuantityMeasurement(1.0, MeasurementUnit.YARD);
+            double result = yard.ConvertTo(MeasurementUnit.INCH);
+            Assert.That(result, Is.EqualTo(36.0));
+        }
+        [Test]
+        public void StaticConvert_TwoPointFiftyFourCentimetresToFeet_ReturnsOneTwelfth()
+        {
+            double value = QuantityMeasurement.Convert(2.54, MeasurementUnit.CENTIMETRE, MeasurementUnit.FEET);
+            Assert.That(value, Is.EqualTo(1.0 / 12.0).Within(1e-9));
+        }
+        [Test]
+        public void Convert_NaN_ThrowsInvalidMeasurementException()
+        {
+            Assert.Throws<InvalidMeasurementException>(() =>
+                QuantityMeasurement.Convert(double.NaN, MeasurementUnit.INCH, MeasurementUnit.FEET));
+        }
+        [Test]
+        public void Convert_InfiniteValue_ThrowsInvalidMeasurementException()
+        {
+            Assert.Throws<InvalidMeasurementException>(() =>
+                QuantityMeasurement.Convert(double.PositiveInfinity, MeasurementUnit.INCH, MeasurementUnit.FEET));
+        }
+        [Test]
+        public void Convert_InvalidUnit_ThrowsInvalidMeasurementException()
+        {
+            MeasurementUnit bogus = (MeasurementUnit)999;
+            Assert.Throws<InvalidMeasurementException>(() =>
+                QuantityMeasurement.Convert(1.0, bogus, MeasurementUnit.INCH));
         }
     }
 }
