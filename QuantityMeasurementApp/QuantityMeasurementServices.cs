@@ -25,7 +25,7 @@ namespace QuantityMeasurementApp
                 int firstChoice = int.Parse(Console.ReadLine());
                 Console.Write("Enter the number for the second unit: ");
                 int secondChoice = int.Parse(Console.ReadLine());
-                var units = (MeasurementUnit[])Enum.GetValues(typeof(MeasurementUnit));
+                var units = (LengthUnit[])Enum.GetValues(typeof(LengthUnit));
                 if (firstChoice < 1 || firstChoice > units.Length ||
                     secondChoice < 1 || secondChoice > units.Length)
                 {
@@ -49,15 +49,15 @@ namespace QuantityMeasurementApp
                 Console.WriteLine($"An unexpected error occurred: {ex.Message}");
             }
         }
-        private void AddMeasurements(MeasurementUnit unit1, MeasurementUnit unit2)
+        private void AddMeasurements(LengthUnit unit1, LengthUnit unit2)
         {
             double val1 = GetValue(unit1.ToString());
             double val2 = GetValue(unit2.ToString());
-            var first = new QuantityMeasurement(val1, unit1);
-            var second = new QuantityMeasurement(val2, unit2);
+            var first = new QuantityLength(val1, unit1);
+            var second = new QuantityLength(val2, unit2);
 
             // ask user for a target unit for the result
-            var units = (MeasurementUnit[])Enum.GetValues(typeof(MeasurementUnit));
+            var units = (LengthUnit[])Enum.GetValues(typeof(LengthUnit));
             Console.WriteLine("Select the unit in which you want the sum to be displayed:");
             for (int i = 0; i < units.Length; i++)
             {
@@ -78,7 +78,7 @@ namespace QuantityMeasurementApp
 
         private void PrintUnits()
         {
-            var units = (MeasurementUnit[])Enum.GetValues(typeof(MeasurementUnit));
+            var units = (LengthUnit[])Enum.GetValues(typeof(LengthUnit));
             for (int i = 0; i < units.Length; i++)
             {
                 Console.WriteLine($"{i + 1}. {units[i]}");
