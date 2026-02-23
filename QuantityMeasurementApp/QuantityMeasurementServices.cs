@@ -55,8 +55,25 @@ namespace QuantityMeasurementApp
             double val2 = GetValue(unit2.ToString());
             var first = new QuantityMeasurement(val1, unit1);
             var second = new QuantityMeasurement(val2, unit2);
-            var sum = first.Add(second);
-            Console.WriteLine($"{val1} {unit1} plus {val2} {unit2} equals {sum.ConvertTo(unit1)} {unit1}\n");
+
+            // ask user for a target unit for the result
+            var units = (MeasurementUnit[])Enum.GetValues(typeof(MeasurementUnit));
+            Console.WriteLine("Select the unit in which you want the sum to be displayed:");
+            for (int i = 0; i < units.Length; i++)
+            {
+                Console.WriteLine($"{i + 1}. {units[i]}");
+            }
+            Console.Write("Enter the number for the target unit: ");
+            if (!int.TryParse(Console.ReadLine(), out int targetChoice) || 
+                targetChoice < 1 || targetChoice > units.Length)
+            {
+                Console.WriteLine("Invalid target unit choice. Operation cancelled.");
+                return;
+            }
+            var targetUnit = units[targetChoice - 1];
+
+            var sum = first.Add(second, targetUnit);
+            Console.WriteLine($"{val1} {unit1} plus {val2} {unit2} equals {sum.ConvertTo(targetUnit)} {targetUnit}\n");
         }   
 
         private void PrintUnits()
