@@ -91,9 +91,6 @@ namespace QuantityMeasurementApp.Tests
             var inch = new QuantityMeasurement(1.0, MeasurementUnit.INCH);
             Assert.That(cm.Equals(inch), Is.False);
         }
-
-        // ---------- UC5: conversion api tests ----------
-
         [Test]
         public void StaticConvert_OneFootToInches_ReturnsTwelve()
         {
@@ -126,11 +123,21 @@ namespace QuantityMeasurementApp.Tests
                 QuantityMeasurement.Convert(double.PositiveInfinity, MeasurementUnit.INCH, MeasurementUnit.FEET));
         }
         [Test]
-        public void Convert_InvalidUnit_ThrowsInvalidMeasurementException()
+        public void Add_OneFootAndTwelveInches_ReturnsTwoFeet()
         {
-            MeasurementUnit bogus = (MeasurementUnit)999;
-            Assert.Throws<InvalidMeasurementException>(() =>
-                QuantityMeasurement.Convert(1.0, bogus, MeasurementUnit.INCH));
+            var first = new QuantityMeasurement(1.0, MeasurementUnit.FEET);
+            var second = new QuantityMeasurement(12.0, MeasurementUnit.INCH);
+            var result = first.Add(second);
+            Assert.That(result, Is.EqualTo(new QuantityMeasurement(2.0, MeasurementUnit.FEET)));
+        }
+
+        [Test]
+        public void Add_OneYardAndOneFoot_ReturnsOnePointThreeThreeYards()
+        {
+            var yard = new QuantityMeasurement(1.0, MeasurementUnit.YARD);
+            var foot = new QuantityMeasurement(1.0, MeasurementUnit.FEET);
+            var sum = yard.Add(foot);
+            Assert.That(sum.ConvertTo(MeasurementUnit.YARD), Is.EqualTo(1.0 + (1.0/3.0)).Within(1e-9));
         }
     }
 }

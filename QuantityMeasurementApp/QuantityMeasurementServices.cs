@@ -13,7 +13,7 @@ namespace QuantityMeasurementApp
                 throw new InvalidMeasurementException($"The measurement value {checkValue} is invalid.");
             }
         }
-        // Ask the user for two measurements, compare them, and report whether they are equal. Errors are caught and printed.
+        // Ask the user for two measurements and perform the requested operation. Errors are caught and printed.
         public void InitializeApplication()
         {
             try
@@ -32,7 +32,9 @@ namespace QuantityMeasurementApp
                     Console.WriteLine("Invalid choice input");
                     return;
                 }
-                CompareMeasurements(units[firstChoice - 1], units[secondChoice - 1]);
+                var u1 = units[firstChoice - 1];
+                var u2 = units[secondChoice - 1];
+                AddMeasurements(u1, u2);
             }
             catch (InvalidMeasurementException ex)
             {
@@ -47,13 +49,14 @@ namespace QuantityMeasurementApp
                 Console.WriteLine($"An unexpected error occurred: {ex.Message}");
             }
         }
-        private void CompareMeasurements(MeasurementUnit unit1, MeasurementUnit unit2)
+        private void AddMeasurements(MeasurementUnit unit1, MeasurementUnit unit2)
         {
             double val1 = GetValue(unit1.ToString());
-            // perform conversion of the first value into the second unit
-            double converted = QuantityMeasurement.Convert(val1, unit1, unit2);
-
-            Console.WriteLine($"{val1} {unit1} is {converted} {unit2}\n");
+            double val2 = GetValue(unit2.ToString());
+            var first = new QuantityMeasurement(val1, unit1);
+            var second = new QuantityMeasurement(val2, unit2);
+            var sum = first.Add(second);
+            Console.WriteLine($"{val1} {unit1} plus {val2} {unit2} equals {sum.ConvertTo(unit1)} {unit1}\n");
         }   
 
         private void PrintUnits()
