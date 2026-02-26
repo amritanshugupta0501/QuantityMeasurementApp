@@ -2,29 +2,26 @@ using System;
 
 namespace QuantityMeasurementApp
 {
-    // represents a measurement of length; conversion logic lives on the unit type itself
-    public class QuantityLength
+    public class QuantityWeight
     {
         private readonly double _measurementValue;
-        private readonly LengthUnit _measurementUnit;
+        private readonly WeightUnit _measurementUnit;
 
-        public QuantityLength(double measurementValue, LengthUnit measurementUnit)
+        public QuantityWeight(double measurementValue, WeightUnit measurementUnit)
         {
             _measurementValue = measurementValue;
             _measurementUnit = measurementUnit;
         }
-
-        public static double Convert(double value, LengthUnit sourceUnit, LengthUnit targetUnit)
+        public static double Convert(double value, WeightUnit sourceUnit, WeightUnit targetUnit)
         {
             // value validation
             if (double.IsNaN(value) || double.IsInfinity(value))
             {
                 throw new InvalidMeasurementException($"Cannot convert invalid quantity: {value}");
             }
-
             // unit validation
-            if (!Enum.IsDefined(typeof(LengthUnit), sourceUnit) ||
-                !Enum.IsDefined(typeof(LengthUnit), targetUnit))
+            if (!Enum.IsDefined(typeof(WeightUnit), sourceUnit) ||
+                !Enum.IsDefined(typeof(WeightUnit), targetUnit))
             {
                 throw new InvalidMeasurementException($"One or more units are not supported: {sourceUnit}, {targetUnit}");
             }
@@ -35,10 +32,10 @@ namespace QuantityMeasurementApp
             return result;
         }
 
-        public double ConvertTo(LengthUnit targetUnit) =>
+        public double ConvertTo(WeightUnit targetUnit) =>
             Convert(_measurementValue, _measurementUnit, targetUnit);
 
-        public QuantityLength Add(QuantityLength other)
+        public QuantityWeight Add(QuantityWeight other)
         {
             if (other == null)
             {
@@ -46,14 +43,14 @@ namespace QuantityMeasurementApp
             }
             double otherInThis = Convert(other._measurementValue, other._measurementUnit, _measurementUnit);
             double sum = _measurementValue + otherInThis;
-            return new QuantityLength(sum, _measurementUnit);
+            return new QuantityWeight(sum, _measurementUnit);
         }
 
-        public QuantityLength Add(QuantityLength other, LengthUnit targetUnit)
+        public QuantityWeight Add(QuantityWeight other, WeightUnit targetUnit)
         {
             var baseSum = Add(other);
             double converted = baseSum.ConvertTo(targetUnit);
-            return new QuantityLength(converted, targetUnit);
+            return new QuantityWeight(converted, targetUnit);
         }
 
         public override bool Equals(object? obj)
@@ -63,10 +60,10 @@ namespace QuantityMeasurementApp
                 return true;
             }
             if (obj == null || GetType() != obj.GetType())
-            {
+            {  
                 return false;
             }
-            QuantityLength otherMeasurement = (QuantityLength)obj;
+            QuantityWeight otherMeasurement = (QuantityWeight)obj;
             double firstMeasurement = _measurementValue * _measurementUnit.ToBaseUnit(1.0);
             double secondMeasurement = otherMeasurement._measurementValue * otherMeasurement._measurementUnit.ToBaseUnit(1.0);
             const double epsilon = 1e-6;
