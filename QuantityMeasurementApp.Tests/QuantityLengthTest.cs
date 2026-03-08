@@ -6,6 +6,7 @@ namespace QuantityMeasurementApp.Tests
     [TestFixture]
     public class QuantityLengthTests
     {
+        
         [Test]
         public void Given0InchesAnd0InchesWhenComparedShouldReturnTrue()
         {
@@ -63,6 +64,38 @@ namespace QuantityMeasurementApp.Tests
             var foot = new Quantity<LengthUnit>(1.0, LengthUnit.FEET, LengthConverter.Instance);
             var sum = yard.Add(foot, LengthUnit.YARD);
             Assert.That(sum.ConvertTo(LengthUnit.YARD), Is.EqualTo(1.0 + (1.0 / 3.0)).Within(1e-9));
+        }
+        [Test]
+        public void testSubtraction_SameUnit_FeetMinusFeet()
+        {
+            var f1 = new Quantity<LengthUnit>(10.0, LengthUnit.FEET, LengthConverter.Instance);
+            var f2 = new Quantity<LengthUnit>(5.0, LengthUnit.FEET, LengthConverter.Instance);
+            var result = f1.Subtract(f2, LengthUnit.FEET);
+            Assert.That(result, Is.EqualTo(new Quantity<LengthUnit>(5.0, LengthUnit.FEET, LengthConverter.Instance)));
+        }
+        [Test]
+        public void testSubtraction_CrossUnit_FeetMinusInches()
+        {
+            var feet = new Quantity<LengthUnit>(10.0, LengthUnit.FEET, LengthConverter.Instance);
+            var inches = new Quantity<LengthUnit>(6.0, LengthUnit.INCH, LengthConverter.Instance);
+            var result = feet.Subtract(inches, LengthUnit.FEET);
+            Assert.That(result.ConvertTo(LengthUnit.FEET), Is.EqualTo(9.5));
+        }
+        [Test]
+        public void testSubtraction_Immutability()
+        {
+            var f1 = new Quantity<LengthUnit>(10.0, LengthUnit.FEET, LengthConverter.Instance);
+            var f2 = new Quantity<LengthUnit>(5.0, LengthUnit.FEET, LengthConverter.Instance);
+            f1.Subtract(f2, LengthUnit.FEET);
+            Assert.That(f1.ConvertTo(LengthUnit.FEET), Is.EqualTo(10.0));
+        }
+        [Test]
+        public void testDivision_CrossUnit_FeetDividedByInches()
+        {
+            var inches = new Quantity<LengthUnit>(24.0, LengthUnit.INCH, LengthConverter.Instance);
+            var feet = new Quantity<LengthUnit>(2.0, LengthUnit.FEET, LengthConverter.Instance);
+            var ratio = inches.Division(feet, LengthUnit.INCH);
+            Assert.That(ratio.ConvertTo(LengthUnit.INCH), Is.EqualTo(1.0));
         }
     }
 }

@@ -23,11 +23,12 @@ namespace QuantityMeasurementApp
         // Adds two quantities together by converting both to a base unit, summing them, and returning a new Quantity in the target unit.
         public Quantity<TUnit> Add(Quantity<TUnit> other, TUnit targetUnit)
         {
-            if (other == null) throw new ArgumentNullException(nameof(other));
-
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
             double val1Base = _converter.ToBaseUnit(_unit, _value);
             double val2Base = _converter.ToBaseUnit(other._unit, other._value);
-            
             double sumBase = val1Base + val2Base;
             double finalValue = _converter.FromBaseUnit(targetUnit, sumBase);
 
@@ -36,14 +37,44 @@ namespace QuantityMeasurementApp
         // Compares two quantities for equality by converting both to their base units and checking if the difference is within a small epsilon.
         public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj is not Quantity<TUnit> other) return false;
-
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj is not Quantity<TUnit> other)
+            {
+                return false;
+            }
             double firstBase = _converter.ToBaseUnit(_unit, _value);
             double secondBase = _converter.ToBaseUnit(other._unit, other._value);
-
             const double epsilon = 1e-6;
             return Math.Abs(firstBase - secondBase) < epsilon;
+        }
+        // Subtracts two quantities together by converting both to a base unit and returning a new Quantity in the target unit.
+        public Quantity<TUnit> Subtract(Quantity<TUnit> other, TUnit targetUnit)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+            double val1Base = _converter.ToBaseUnit(_unit, _value);
+            double val2Base = _converter.ToBaseUnit(other._unit, other._value);
+            double sumBase = val1Base - val2Base;
+            double finalValue = _converter.FromBaseUnit(targetUnit, sumBase);
+            return new Quantity<TUnit>(finalValue, targetUnit, _converter);
+        }
+        // Divides two quantities together by converting both to a base unit and returning a new Quantity in the target unit.
+        public Quantity<TUnit> Division(Quantity<TUnit> other, TUnit targetUnit)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+            double val1Base = _converter.ToBaseUnit(_unit, _value);
+            double val2Base = _converter.ToBaseUnit(other._unit, other._value);
+            double sumBase = val1Base / val2Base;
+            double finalValue = _converter.FromBaseUnit(targetUnit, sumBase);
+            return new Quantity<TUnit>(finalValue, targetUnit, _converter);
         }
     }
 }

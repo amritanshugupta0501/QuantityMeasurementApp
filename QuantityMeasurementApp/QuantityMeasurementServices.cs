@@ -57,9 +57,11 @@ namespace QuantityMeasurementApp
         // Manages the shared workflow for a category: showing available units, getting user selections, and choosing an operation.
         private void HandleMeasurement<TUnit>(string categoryName, IUnitConverter<TUnit> converter) where TUnit : Enum
         {
-            Console.WriteLine("1. Compare Units\n2. Add Units");
-            if (!int.TryParse(Console.ReadLine(), out int choice)) return;
-
+            Console.WriteLine("1. Compare Units\n2. Add Units\n3. Subtract Units\n4. Divide Units");
+            if (!int.TryParse(Console.ReadLine(), out int choice))
+            {
+                return;
+            }
             Console.WriteLine($"\nAvailable {categoryName} units:");
             var units = (TUnit[])Enum.GetValues(typeof(TUnit));
             PrintUnits(units);
@@ -85,6 +87,14 @@ namespace QuantityMeasurementApp
             else if (choice == 2)
             {
                 AddMeasurements(unit1, unit2, converter);
+            }
+            else if (choice == 3)
+            {
+                SubtractMeasurements(unit1, unit2, converter);
+            }
+            else if (choice == 4)
+            {
+                DivisionOfMeasurements(unit1, unit2, converter);
             }
         }
         // Handles the comparison logic by creating Quantity objects and checking if they represent the same physical magnitude.
@@ -117,6 +127,48 @@ namespace QuantityMeasurementApp
             {
                 TUnit targetUnit = units[targetChoice - 1];
                 var sumQuantity = first.Add(second, targetUnit);
+
+                Console.WriteLine($"\nRESULT: {val1} {unit1} + {val2} {unit2} = {sumQuantity.ConvertTo(targetUnit)} {targetUnit}\n");
+            }
+        }
+        // // Handles the subtraction logic by creating Quantity objects and calculating their difference in a user-specified target unit.
+        private void SubtractMeasurements<TUnit>(TUnit unit1, TUnit unit2, IUnitConverter<TUnit> converter) where TUnit : Enum
+        {
+            double val1 = GetValue(unit1.ToString());
+            double val2 = GetValue(unit2.ToString());
+
+            var first = new Quantity<TUnit>(val1, unit1, converter);
+            var second = new Quantity<TUnit>(val2, unit2, converter);
+
+            var units = (TUnit[])Enum.GetValues(typeof(TUnit));
+            Console.WriteLine("\nSelect the target unit for the sum:");
+            PrintUnits(units);
+
+            if (int.TryParse(Console.ReadLine(), out int targetChoice) && targetChoice >= 1 && targetChoice <= units.Length)
+            {
+                TUnit targetUnit = units[targetChoice - 1];
+                var sumQuantity = first.Subtract(second, targetUnit);
+
+                Console.WriteLine($"\nRESULT: {val1} {unit1} + {val2} {unit2} = {sumQuantity.ConvertTo(targetUnit)} {targetUnit}\n");
+            }
+        }
+        // Handles the division logic by creating Quantity objects and calculating their quotient in a user-specified target unit.
+        private void DivisionOfMeasurements<TUnit>(TUnit unit1, TUnit unit2, IUnitConverter<TUnit> converter) where TUnit : Enum
+        {
+            double val1 = GetValue(unit1.ToString());
+            double val2 = GetValue(unit2.ToString());
+
+            var first = new Quantity<TUnit>(val1, unit1, converter);
+            var second = new Quantity<TUnit>(val2, unit2, converter);
+
+            var units = (TUnit[])Enum.GetValues(typeof(TUnit));
+            Console.WriteLine("\nSelect the target unit for the sum:");
+            PrintUnits(units);
+
+            if (int.TryParse(Console.ReadLine(), out int targetChoice) && targetChoice >= 1 && targetChoice <= units.Length)
+            {
+                TUnit targetUnit = units[targetChoice - 1];
+                var sumQuantity = first.Division(second, targetUnit);
 
                 Console.WriteLine($"\nRESULT: {val1} {unit1} + {val2} {unit2} = {sumQuantity.ConvertTo(targetUnit)} {targetUnit}\n");
             }
