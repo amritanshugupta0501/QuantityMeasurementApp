@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace QuantityMeasurementApp
 {
-    public class VolumeConverter : IUnitConverter<VolumeUnit>
+    public class VolumeConverter : IMeasurable<VolumeUnit>
     {
         public static readonly VolumeConverter Instance = new();
 

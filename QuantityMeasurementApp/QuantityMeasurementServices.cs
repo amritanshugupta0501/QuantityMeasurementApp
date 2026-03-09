@@ -18,18 +18,30 @@ namespace QuantityMeasurementApp
             try
             {
                 Console.WriteLine("Welcome to Quantity Measurement!");
-                Console.WriteLine("Type Of Units Available : \n1. Weight\n2. Length\n3. Volume");
+                Console.WriteLine("Type Of Units Available : \n1. Weight\n2. Length\n3. Volume\n4. Temperature");
 
                 if (!int.TryParse(Console.ReadLine(), out int choice))
                 {
+                    Console.WriteLine("Invalid Choice input");
                     return;
                 }
                 switch (choice)
                 {
-                    case 1: HandleMeasurementCategory<WeightUnit>("Weight", WeightConverter.Instance); break;
-                    case 2: HandleMeasurementCategory<LengthUnit>("Length", LengthConverter.Instance); break;
-                    case 3: HandleMeasurementCategory<VolumeUnit>("Volume", VolumeConverter.Instance); break;
-                    default: Console.WriteLine("Invalid choice"); break;
+                    case 1:
+                        HandleMeasurementCategory<WeightUnit>("Weight", WeightConverter.Instance); 
+                        break;
+                    case 2: 
+                        HandleMeasurementCategory<LengthUnit>("Length", LengthConverter.Instance); 
+                        break;
+                    case 3:
+                        HandleMeasurementCategory<VolumeUnit>("Volume", VolumeConverter.Instance);
+                        break;
+                    case 4:
+                        HandleMeasurementCategory<TemperatureUnit>("Volume", TemperatureConverter.Instance);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice"); 
+                        break;
                 }
             }
             catch (Exception ex)
@@ -38,25 +50,37 @@ namespace QuantityMeasurementApp
             }
         }
         // Manages the shared workflow for a category: showing available units, getting user selections, and choosing an operation.
-        private void HandleMeasurementCategory<TUnit>(string name, IUnitConverter<TUnit> converter) where TUnit : Enum
+        private void HandleMeasurementCategory<TUnit>(string name, IMeasurable<TUnit> converter) where TUnit : Enum
         {
-            Console.WriteLine("\n1. Compare\n2. Add\n3. Subtract\n4. Divide");
-            if (!int.TryParse(Console.ReadLine(), out int opChoice)) return;
-
+            // Identify if the measurement unit selected is temperature or not
+            bool isTemperature = typeof(TUnit) == typeof(TemperatureUnit);
+            Console.WriteLine($"\n{name} Operations");
+            Console.WriteLine("1. Compare\n2. Add\n3. Subtract");
+            if (!isTemperature)
+            {
+                Console.WriteLine("4. Divide");
+            }
+            Console.Write("\nSelect Operation: ");
+            if (!int.TryParse(Console.ReadLine(), out int opChoice))
+            {
+                return;
+            } 
+            if (isTemperature && opChoice == 4)
+            {
+                throw new InvalidMeasurementException("Temperature values cannot be divided. This operation is physically nonsensical.");
+                return;
+            }
             var units = (TUnit[])Enum.GetValues(typeof(TUnit));
-            PrintUnits(units);
-
-            Console.Write("Select First Unit: ");
+            PrintUnits(units); 
+            Console.Write("Select First Unit (Number): ");
             int u1 = int.Parse(Console.ReadLine()) - 1;
-            Console.Write("Select Second Unit: ");
+            Console.Write("Select Second Unit (Number): ");
             int u2 = int.Parse(Console.ReadLine()) - 1;
-
             TUnit unit1 = units[u1];
             TUnit unit2 = units[u2];
-
             if (opChoice == 1)
             {
-                CompareUnits(unit1, unit2, converter);
+               CompareUnits(unit1, unit2, converter);
             }
             else
             {
@@ -65,13 +89,13 @@ namespace QuantityMeasurementApp
                     2 => ArithmeticOperation.Add,
                     3 => ArithmeticOperation.Subtract,
                     4 => ArithmeticOperation.Divide,
-                    _ => throw new InvalidOperationException("Invalid Operation")
+                    _ => throw new InvalidOperationException("Invalid Operation Selection")
                 };
                 ExecuteArithmetic(unit1, unit2, converter, op);
             }
         }
         // Handling arithmetic operations as per the user choice.
-        private void ExecuteArithmetic<TUnit>(TUnit unit1, TUnit unit2, IUnitConverter<TUnit> converter, ArithmeticOperation op) where TUnit : Enum
+        private void ExecuteArithmetic<TUnit>(TUnit unit1, TUnit unit2, IMeasurable<TUnit> converter, ArithmeticOperation op) where TUnit : Enum
         {
             double val1 = GetValue(unit1.ToString());
             double val2 = GetValue(unit2.ToString());
@@ -101,7 +125,7 @@ namespace QuantityMeasurementApp
             }
         }
         // Handles the comparison logic by creating Quantity objects and checking if they represent the same physical magnitude.
-        private void CompareUnits<TUnit>(TUnit u1, TUnit u2, IUnitConverter<TUnit> conv) where TUnit : Enum
+        private void CompareUnits<TUnit>(TUnit u1, TUnit u2, IMeasurable<TUnit> conv) where TUnit : Enum
         {
             var q1 = new Quantity<TUnit>(GetValue(u1.ToString()), u1, conv);
             var q2 = new Quantity<TUnit>(GetValue(u2.ToString()), u2, conv);

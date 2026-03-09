@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace QuantityMeasurementApp
 {
-    public class LengthConverter : IUnitConverter<LengthUnit>
+    public class LengthConverter : IMeasurable<LengthUnit>
     {
         public static readonly LengthConverter Instance = new();
 
