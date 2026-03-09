@@ -9,9 +9,7 @@ namespace QuantityMeasurementApp.Tests
     {
         private readonly IMeasurable<TemperatureUnit> _converter = TemperatureConverter.Instance;
         private const double Epsilon = 1e-5;
-
-        // --- Comparison & Equality Tests ---
-
+        // Comparison & Equality Tests 
         [Test]
         public void Equals_CelsiusAndFahrenheit_FreezingPoint_ReturnsTrue()
         {
@@ -19,7 +17,6 @@ namespace QuantityMeasurementApp.Tests
             var fahrenheit = new Quantity<TemperatureUnit>(32.0, TemperatureUnit.FAHRENHEIT, _converter);
             Assert.That(celsius.Equals(fahrenheit), Is.True);
         }
-
         [Test]
         public void Equals_KelvinAndCelsius_AbsoluteZeroOffset_ReturnsTrue()
         {
@@ -27,7 +24,6 @@ namespace QuantityMeasurementApp.Tests
             var celsius = new Quantity<TemperatureUnit>(0.0, TemperatureUnit.CELSIUS, _converter);
             Assert.That(kelvin.Equals(celsius), Is.True);
         }
-
         [Test]
         public void Equals_FahrenheitAndCelsius_BoilingPoint_ReturnsTrue()
         {
@@ -35,9 +31,7 @@ namespace QuantityMeasurementApp.Tests
             var celsius = new Quantity<TemperatureUnit>(100.0, TemperatureUnit.CELSIUS, _converter);
             Assert.That(fahrenheit.Equals(celsius), Is.True);
         }
-
-        // --- Conversion Tests ---
-
+        // Conversion Tests 
         [Test]
         public void ConvertTo_CelsiusToFahrenheit_ReturnsCorrectValue()
         {
@@ -45,7 +39,6 @@ namespace QuantityMeasurementApp.Tests
             double result = celsius.ConvertTo(TemperatureUnit.FAHRENHEIT);
             Assert.That(result, Is.EqualTo(212.0).Within(Epsilon));
         }
-
         [Test]
         public void ConvertTo_FahrenheitToCelsius_ReturnsCorrectValue()
         {
@@ -53,18 +46,14 @@ namespace QuantityMeasurementApp.Tests
             double result = fahrenheit.ConvertTo(TemperatureUnit.CELSIUS);
             Assert.That(result, Is.EqualTo(0.0).Within(Epsilon));
         }
-
         [Test]
         public void ConvertTo_CelsiusToFahrenheit_EqualPoint_ReturnsMinusForty()
         {
-            // -40 is the unique point where C and F scales meet
             var celsius = new Quantity<TemperatureUnit>(-40.0, TemperatureUnit.CELSIUS, _converter);
             double result = celsius.ConvertTo(TemperatureUnit.FAHRENHEIT);
             Assert.That(result, Is.EqualTo(-40.0).Within(Epsilon));
         }
-
-        // --- Unsupported Operations (UC14 Requirements) ---
-
+        // Unsupported Operations 
         [Test]
         public void Add_Temperatures_ThrowsUnsupportedOperationException()
         {
@@ -74,7 +63,6 @@ namespace QuantityMeasurementApp.Tests
             Assert.Throws<InvalidMeasurementException>(() => t1.Add(t2, TemperatureUnit.CELSIUS),
                 "Temperature should not support addition per UC14.");
         }
-
         [Test]
         public void Subtract_Temperatures_ThrowsUnsupportedOperationException()
         {
@@ -83,7 +71,6 @@ namespace QuantityMeasurementApp.Tests
 
             Assert.Throws<InvalidMeasurementException>(() => t1.Subtract(t2, TemperatureUnit.CELSIUS));
         }
-
         [Test]
         public void Divide_Temperatures_ThrowsUnsupportedOperationException()
         {
