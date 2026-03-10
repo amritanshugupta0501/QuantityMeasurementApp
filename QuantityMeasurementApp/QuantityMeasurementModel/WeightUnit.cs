@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace QuantityMeasurementApp
+namespace QuantityMeasurementModel
 {
     // Enum for all the weight units.
     public enum WeightUnit

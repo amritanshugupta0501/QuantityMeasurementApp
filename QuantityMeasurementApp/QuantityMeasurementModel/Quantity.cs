@@ -1,4 +1,4 @@
-namespace QuantityMeasurementApp
+namespace QuantityMeasurementModel
 {
     public class Quantity<TUnit> where TUnit : Enum
     {

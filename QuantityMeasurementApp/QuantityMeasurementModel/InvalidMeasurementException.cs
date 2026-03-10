@@ -1,6 +1,6 @@
 using System;
 
-namespace QuantityMeasurementApp
+namespace QuantityMeasurementModel
 {
     // A custom exception type used when a measurement value is not valid (for example, it is negative or infinite).
     public class InvalidMeasurementException : Exception

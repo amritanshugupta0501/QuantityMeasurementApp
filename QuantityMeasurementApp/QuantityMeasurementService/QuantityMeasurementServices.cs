@@ -1,8 +1,8 @@
 using System;
-
-namespace QuantityMeasurementApp
+using QuantityMeasurementModel; 
+namespace QuantityMeasurementService
 {
-    public class QuantityMeasurementServices
+    public class QuantityMeasurementServices : IQuantityMeasurementService
     {
         // Checks if a measurement value is valid (not negative or infinity) before processing.
         public void ValidateValue(double checkValue)

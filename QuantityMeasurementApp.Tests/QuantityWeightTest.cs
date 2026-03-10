@@ -1,6 +1,7 @@
-using System;
 using NUnit.Framework;
-using QuantityMeasurementApp;
+using System;
+using QuantityMeasurementModel;   
+using QuantityMeasurementService; 
 
 namespace QuantityMeasurementApp.Tests
 {
@@ -9,6 +10,7 @@ namespace QuantityMeasurementApp.Tests
     {
         private readonly IMeasurable<WeightUnit> _converter = WeightConverter.Instance;
         private const double Epsilon = 1e-6;
+
         // Comparison Tests 
         [Test]
         public void Equals_KilogramsAndGrams_SameMagnitude_ReturnsTrue()
@@ -18,6 +20,7 @@ namespace QuantityMeasurementApp.Tests
 
             Assert.That(kg.Equals(grams), Is.True);
         }
+
         [Test]
         public void Equals_PoundsAndGrams_EquivalentValues_ReturnsTrue()
         {
@@ -26,23 +29,30 @@ namespace QuantityMeasurementApp.Tests
 
             Assert.That(pound.Equals(grams), Is.True);
         }
+
         // Arithmetic Tests 
         [Test]
         public void Add_KilogramAndGrams_ReturnsCorrectSumInKilograms()
         {
             var kg = new Quantity<WeightUnit>(1.0, WeightUnit.KILOGRAM, _converter);
             var grams = new Quantity<WeightUnit>(1000.0, WeightUnit.GRAM, _converter);
+            
             var result = kg.Add(grams, WeightUnit.KILOGRAM);
+            
             Assert.That(result.ConvertTo(WeightUnit.KILOGRAM), Is.EqualTo(2.0).Within(Epsilon));
         }
+
         [Test]
         public void Subtract_ImmutabilityCheck_OriginalValueShouldNotChange()
         {
             var w1 = new Quantity<WeightUnit>(10.0, WeightUnit.KILOGRAM, _converter);
             var w2 = new Quantity<WeightUnit>(5.0, WeightUnit.KILOGRAM, _converter);
+            
             w1.Subtract(w2, WeightUnit.KILOGRAM);
+            
             Assert.That(w1.ConvertTo(WeightUnit.KILOGRAM), Is.EqualTo(10.0));
         }
+
         [Test]
         public void Division_KilogramsAndGrams_ReturnsRatioOfOne()
         {
@@ -53,11 +63,13 @@ namespace QuantityMeasurementApp.Tests
 
             Assert.That(result.ConvertTo(WeightUnit.KILOGRAM), Is.EqualTo(1.0).Within(Epsilon));
         }
+
         // Validation Logic
         [Test]
         public void Arithmetic_NullOperand_ThrowsArgumentNullException()
         {
             var w1 = new Quantity<WeightUnit>(10.0, WeightUnit.KILOGRAM, _converter);
+            
             Assert.Throws<ArgumentNullException>(() => w1.Subtract(null!, WeightUnit.KILOGRAM));
         }
     }
