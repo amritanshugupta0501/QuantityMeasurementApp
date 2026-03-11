@@ -9,10 +9,9 @@ namespace QuantityMeasurementApp
         {
             // Create the service
             IQuantityMeasurementService appService = new QuantityMeasurementServices();
-            
+            QuantityMeasurementController applicationController = new QuantityMeasurementController(appService);
             // Start the application
-            appService.InitializeApplication();
-
+            applicationController.InitializeApplication();
             Console.WriteLine("\nPress any key to exit...");
             Console.ReadKey();
         }

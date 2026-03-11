@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\QuantityMeasurementRepository\QuantityMeasurementRepository.csproj" />
     <ProjectReference Include="..\QuantityMeasurementModel\QuantityMeasurementModel.csproj" />
   </ItemGroup>
 

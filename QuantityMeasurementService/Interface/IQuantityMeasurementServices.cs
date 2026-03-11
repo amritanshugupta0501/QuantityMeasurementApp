@@ -1,7 +1,9 @@
+using QuantityMeasurementModel;
+
 namespace QuantityMeasurementService
 {
     public interface IQuantityMeasurementService
     {
-        void InitializeApplication();
+        MeasurementResponseDTO ProcessMeasurement(MeasurementRequestDTO request);
     }
 }

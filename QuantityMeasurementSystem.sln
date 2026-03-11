@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementModel", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementService", "QuantityMeasurementService\QuantityMeasurementService.csproj", "{B8E4322B-922A-4AA1-81A9-F4DD9B853EDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementApi", "QuantityMeasurementApi\QuantityMeasurementApi.csproj", "{3F97BCD5-E051-49C4-A417-7AC1557FCECB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementApp.Tests", "QuantityMeasurementApp.Tests\QuantityMeasurementApp.Tests.csproj", "{85E57712-E63E-4D9C-A3E5-60ABA0213924}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementApp", "QuantityMeasurementApp\QuantityMeasurementApp.csproj", "{44BFB60A-37FE-480F-AFD9-687A72CCB32F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +83,18 @@ Global
 		{85E57712-E63E-4D9C-A3E5-60ABA0213924}.Release|x64.Build.0 = Release|Any CPU
 		{85E57712-E63E-4D9C-A3E5-60ABA0213924}.Release|x86.ActiveCfg = Release|Any CPU
 		{85E57712-E63E-4D9C-A3E5-60ABA0213924}.Release|x86.Build.0 = Release|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Debug|x64.Build.0 = Debug|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Debug|x86.Build.0 = Debug|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Release|x64.ActiveCfg = Release|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Release|x64.Build.0 = Release|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Release|x86.ActiveCfg = Release|Any CPU
+		{44BFB60A-37FE-480F-AFD9-687A72CCB32F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

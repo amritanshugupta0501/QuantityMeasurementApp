@@ -1,65 +1,104 @@
 using NUnit.Framework;
-using System;
 using QuantityMeasurementModel;   
 using QuantityMeasurementService; 
 
 namespace QuantityMeasurementApp.Tests
 {
     [TestFixture]
-    public class QuantityLengthTests
+    public class QuantityMeasurementServiceLengthTests
     {
-        private readonly IMeasurable<LengthUnit> _converter = LengthConverter.Instance;
+        private IQuantityMeasurementService _service;
+
+        // Runs once before every single test to ensure a fresh Service
+        [SetUp]
+        public void Setup()
+        {
+            _service = new QuantityMeasurementServices();
+        }
 
         // Comparison Tests 
         [Test]
-        public void Equals_SameValuesInDifferentUnits_ReturnsTrue()
+        public void Compare_SameValuesInDifferentUnits_ReturnsTrue()
         {
-            var foot = new Quantity<LengthUnit>(1.0, LengthUnit.FEET, _converter);
-            var inch = new Quantity<LengthUnit>(12.0, LengthUnit.INCH, _converter);
-            
-            Assert.That(foot, Is.EqualTo(inch)); 
+            var request = new MeasurementRequestDTO
+            {
+                MeasurementCategory = "Length",
+                OperationType = MeasurementAction.Compare,
+                MeasurementValue1 = 1.0,
+                MeasurementUnit1 = "FEET",
+                MeasurementValue2 = 12.0,
+                MeasurementUnit2 = "INCH"
+            };
+
+            var response = _service.ProcessMeasurement(request);
+
+            Assert.That(response.IsSuccess, Is.True);
+            Assert.That(response.IsComparison, Is.True);
+            Assert.That(response.AreEqual, Is.True); 
         }
 
         // Arithmetic Tests 
         [Test]
         public void Add_OneFootAndTwelveInches_ReturnsTwoFeet()
         {
-            var first = new Quantity<LengthUnit>(1.0, LengthUnit.FEET, _converter);
-            var second = new Quantity<LengthUnit>(12.0, LengthUnit.INCH, _converter);
+            var request = new MeasurementRequestDTO
+            {
+                MeasurementCategory = "Length",
+                OperationType = MeasurementAction.Add,
+                MeasurementValue1 = 1.0,
+                MeasurementUnit1 = "FEET",
+                MeasurementValue2 = 12.0,
+                MeasurementUnit2 = "INCH",
+                TargetMeasurementUnit = "FEET"
+            };
 
-            var result = first.Add(second, LengthUnit.FEET);
+            var response = _service.ProcessMeasurement(request);
 
-            Assert.That(result.ConvertTo(LengthUnit.FEET), Is.EqualTo(2.0).Within(1e-6));
+            Assert.That(response.IsSuccess, Is.True);
+            Assert.That(response.CalculatedValue, Is.EqualTo(2.0).Within(1e-6));
+            Assert.That(response.FormattedMessage, Is.EqualTo("1 FEET + 12 INCH = 2 FEET")); 
         }
 
         [Test]
         public void Subtract_FeetAndInches_ReturnsCorrectFeet()
         {
-            var feet = new Quantity<LengthUnit>(10.0, LengthUnit.FEET, _converter);
-            var inches = new Quantity<LengthUnit>(6.0, LengthUnit.INCH, _converter);
+            var request = new MeasurementRequestDTO
+            {
+                MeasurementCategory = "Length",
+                OperationType = MeasurementAction.Subtract,
+                MeasurementValue1 = 10.0,
+                MeasurementUnit1 = "FEET",
+                MeasurementValue2 = 6.0,
+                MeasurementUnit2 = "INCH",
+                TargetMeasurementUnit = "FEET"
+            };
 
-            var result = feet.Subtract(inches, LengthUnit.FEET);
+            var response = _service.ProcessMeasurement(request);
 
-            Assert.That(result.ConvertTo(LengthUnit.FEET), Is.EqualTo(9.5).Within(1e-6));
+            Assert.That(response.IsSuccess, Is.True);
+            Assert.That(response.CalculatedValue, Is.EqualTo(9.5).Within(1e-6));
         }
 
         // Validation Tests 
-        [TestCase(ArithmeticOperation.Add)]
-        [TestCase(ArithmeticOperation.Subtract)]
-        [TestCase(ArithmeticOperation.Divide)]
-        public void Arithmetic_NullOperand_ThrowsArgumentNullException(ArithmeticOperation op)
+        [TestCase(MeasurementAction.Add)]
+        [TestCase(MeasurementAction.Subtract)]
+        [TestCase(MeasurementAction.Divide)]
+        public void Arithmetic_InvalidUnit_ReturnsFailedDto(MeasurementAction op)
         {
-            var q = new Quantity<LengthUnit>(1.0, LengthUnit.INCH, _converter);
-
-            TestDelegate action = op switch
+            var request = new MeasurementRequestDTO
             {
-                ArithmeticOperation.Add => () => q.Add(null!, LengthUnit.INCH),
-                ArithmeticOperation.Subtract => () => q.Subtract(null!, LengthUnit.INCH),
-                ArithmeticOperation.Divide => () => q.Division(null!, LengthUnit.INCH),
-                _ => throw new ArgumentOutOfRangeException(nameof(op), "Invalid operation")
+                MeasurementCategory = "Length",
+                OperationType = op,
+                MeasurementValue1 = 1.0,
+                MeasurementUnit1 = "NOT_A_REAL_UNIT", 
+                MeasurementValue2 = 12.0,
+                MeasurementUnit2 = "INCH",
+                TargetMeasurementUnit = "FEET"
             };
 
-            Assert.Throws<ArgumentNullException>(action);
+            var response = _service.ProcessMeasurement(request);
+            Assert.That(response.IsSuccess, Is.False);
+            Assert.That(response.ErrorMessage, Is.EqualTo("Invalid unit provided."));
         }
     }
 }
