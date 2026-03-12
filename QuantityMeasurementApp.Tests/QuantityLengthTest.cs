@@ -24,10 +24,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Length",
                 OperationType = MeasurementAction.Compare,
-                MeasurementValue1 = 1.0,
-                MeasurementUnit1 = "FEET",
-                MeasurementValue2 = 12.0,
-                MeasurementUnit2 = "INCH"
+                MeasurementValueFirst = 1.0,
+                MeasurementUnitFirst = "FEET",
+                MeasurementValueSecond = 12.0,
+                MeasurementUnitSecond = "INCH"
             };
 
             var response = _service.ProcessMeasurement(request);
@@ -45,10 +45,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Length",
                 OperationType = MeasurementAction.Add,
-                MeasurementValue1 = 1.0,
-                MeasurementUnit1 = "FEET",
-                MeasurementValue2 = 12.0,
-                MeasurementUnit2 = "INCH",
+                MeasurementValueFirst = 1.0,
+                MeasurementUnitFirst = "FEET",
+                MeasurementValueSecond = 12.0,
+                MeasurementUnitSecond = "INCH",
                 TargetMeasurementUnit = "FEET"
             };
 
@@ -66,10 +66,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Length",
                 OperationType = MeasurementAction.Subtract,
-                MeasurementValue1 = 10.0,
-                MeasurementUnit1 = "FEET",
-                MeasurementValue2 = 6.0,
-                MeasurementUnit2 = "INCH",
+                MeasurementValueFirst = 10.0,
+                MeasurementUnitFirst = "FEET",
+                MeasurementValueSecond = 6.0,
+                MeasurementUnitSecond = "INCH",
                 TargetMeasurementUnit = "FEET"
             };
 
@@ -89,10 +89,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Length",
                 OperationType = op,
-                MeasurementValue1 = 1.0,
-                MeasurementUnit1 = "NOT_A_REAL_UNIT", 
-                MeasurementValue2 = 12.0,
-                MeasurementUnit2 = "INCH",
+                MeasurementValueFirst = 1.0,
+                MeasurementUnitFirst = "NOT_A_REAL_UNIT", 
+                MeasurementValueSecond = 12.0,
+                MeasurementUnitSecond = "INCH",
                 TargetMeasurementUnit = "FEET"
             };
 

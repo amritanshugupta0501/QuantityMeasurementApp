@@ -24,10 +24,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Weight",
                 OperationType = MeasurementAction.Compare,
-                MeasurementValue1 = 1.0,
-                MeasurementUnit1 = "KILOGRAM",
-                MeasurementValue2 = 1000.0,
-                MeasurementUnit2 = "GRAM"
+                MeasurementValueFirst = 1.0,
+                MeasurementUnitFirst = "KILOGRAM",
+                MeasurementValueSecond = 1000.0,
+                MeasurementUnitSecond = "GRAM"
             };
             var response = _service.ProcessMeasurement(request);
             Assert.That(response.IsSuccess, Is.True);
@@ -42,10 +42,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Weight",
                 OperationType = MeasurementAction.Compare,
-                MeasurementValue1 = 1.0,
-                MeasurementUnit1 = "POUND",
-                MeasurementValue2 = 453.592,
-                MeasurementUnit2 = "GRAM"
+                MeasurementValueFirst = 1.0,
+                MeasurementUnitFirst = "POUND",
+                MeasurementValueSecond = 453.592,
+                MeasurementUnitSecond = "GRAM"
             };
             var response = _service.ProcessMeasurement(request);
             Assert.That(response.IsSuccess, Is.True);
@@ -61,10 +61,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Weight",
                 OperationType = MeasurementAction.Add,
-                MeasurementValue1 = 1.0,
-                MeasurementUnit1 = "KILOGRAM",
-                MeasurementValue2 = 1000.0,
-                MeasurementUnit2 = "GRAM",
+                MeasurementValueFirst = 1.0,
+                MeasurementUnitFirst = "KILOGRAM",
+                MeasurementValueSecond = 1000.0,
+                MeasurementUnitSecond = "GRAM",
                 TargetMeasurementUnit = "KILOGRAM"
             };
 
@@ -81,10 +81,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Weight",
                 OperationType = MeasurementAction.Subtract,
-                MeasurementValue1 = 10.0,
-                MeasurementUnit1 = "KILOGRAM",
-                MeasurementValue2 = 5.0,
-                MeasurementUnit2 = "KILOGRAM",
+                MeasurementValueFirst = 10.0,
+                MeasurementUnitFirst = "KILOGRAM",
+                MeasurementValueSecond = 5.0,
+                MeasurementUnitSecond = "KILOGRAM",
                 TargetMeasurementUnit = "KILOGRAM"
             };
             var response = _service.ProcessMeasurement(request);
@@ -99,10 +99,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Weight",
                 OperationType = MeasurementAction.Divide,
-                MeasurementValue1 = 2.0,
-                MeasurementUnit1 = "KILOGRAM",
-                MeasurementValue2 = 2000.0,
-                MeasurementUnit2 = "GRAM",
+                MeasurementValueFirst = 2.0,
+                MeasurementUnitFirst = "KILOGRAM",
+                MeasurementValueSecond = 2000.0,
+                MeasurementUnitSecond = "GRAM",
                 TargetMeasurementUnit = "KILOGRAM"
             };
             var response = _service.ProcessMeasurement(request);
@@ -118,10 +118,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Weight",
                 OperationType = MeasurementAction.Subtract,
-                MeasurementValue1 = 10.0,
-                MeasurementUnit1 = "KILOGRAM",
-                MeasurementValue2 = 5.0,
-                MeasurementUnit2 = "",
+                MeasurementValueFirst = 10.0,
+                MeasurementUnitFirst = "KILOGRAM",
+                MeasurementValueSecond = 5.0,
+                MeasurementUnitSecond = "",
                 TargetMeasurementUnit = "KILOGRAM"
             };
 
