@@ -1,7 +1,6 @@
 using System;
 using QuantityMeasurementModel;
-using QuantityMeasurementRepository; 
-
+using QuantityMeasurementRepository;
 namespace QuantityMeasurementService
 {
     public class QuantityMeasurementServices : IQuantityMeasurementService
@@ -11,103 +10,190 @@ namespace QuantityMeasurementService
         {
             _repository = repository;
         }
-
-        public void ValidateValue(double checkValue)
-        {
-            if (double.IsNegative(checkValue) || double.IsInfinity(checkValue))
-            {
-                throw new InvalidMeasurementException($"The measurement value {checkValue} is invalid.");
-            }
-        }
-
-        public MeasurementResponseDTO ProcessMeasurement(MeasurementRequestDTO request)
+        public QuantityMeasurementDTO Compare(QuantityInputDTO request)
         {
             try
             {
-                MeasurementResponseDTO response = request.MeasurementCategory.ToLower() switch
+                return request.thisQuantityDTO.measurementType switch
                 {
-                    "length" => ProcessCategory<LengthUnit>(request, LengthConverter.Instance),
-                    "volume" => ProcessCategory<VolumeUnit>(request, VolumeConverter.Instance),
-                    "weight" => ProcessCategory<WeightUnit>(request, WeightConverter.Instance),
-                    "temperature" => ProcessCategory<TemperatureUnit>(request, TemperatureConverter.Instance),
-                    _ => throw new ArgumentException("Invalid category")
-                };
-                if (response.IsSuccess)
-                {
-                    SaveToDatabase(request, response);
-                }
-                return response;
-            }
-            catch (InvalidMeasurementException ex)
-            {
-                return new MeasurementResponseDTO { IsSuccess = false, ErrorMessage = ex.Message };
-            }
-        }
-
-        private MeasurementResponseDTO ProcessCategory<TUnit>(MeasurementRequestDTO req, IMeasurable<TUnit> converter) where TUnit : struct, Enum
-        {
-            ValidateValue(req.MeasurementValueFirst);
-            ValidateValue(req.MeasurementValueSecond);
-
-            if (!Enum.TryParse(req.MeasurementUnitFirst, true, out TUnit u1) || !Enum.TryParse(req.MeasurementUnitSecond, true, out TUnit u2))
-            {
-                throw new InvalidMeasurementException("Invalid unit provided.");
-            }
-            var q1 = new Quantity<TUnit>(req.MeasurementValueFirst, u1, converter);
-            var q2 = new Quantity<TUnit>(req.MeasurementValueSecond, u2, converter);
-            if (req.OperationType == MeasurementAction.Compare)
-            {
-                return new MeasurementResponseDTO
-                {
-                    IsSuccess = true,
-                    IsComparison = true,
-                    AreEqual = q1.Equals(q2)
+                    "LengthUnit" => ExecuteCompare<LengthUnit>(request, LengthConverter.Instance),
+                    "VolumeUnit" => ExecuteCompare<VolumeUnit>(request, VolumeConverter.Instance),
+                    "WeightUnit" => ExecuteCompare<WeightUnit>(request, WeightConverter.Instance),
+                    "TemperatureUnit" => ExecuteCompare<TemperatureUnit>(request, TemperatureConverter.Instance),
+                    _ => throw new ArgumentException("Invalid measurement type.")
                 };
             }
+            catch (Exception ex)
+            {
+                return HandleError(request, MeasurementOperation.Compare, ex.Message);
+            }
+        }
+        public QuantityMeasurementDTO Add(QuantityInputDTO request)
+        {
+            try
+            {
+                return request.thisQuantityDTO.measurementType switch
+                {
+                    "LengthUnit" => ExecuteAdd<LengthUnit>(request, LengthConverter.Instance),
+                    "VolumeUnit" => ExecuteAdd<VolumeUnit>(request, VolumeConverter.Instance),
+                    "WeightUnit" => ExecuteAdd<WeightUnit>(request, WeightConverter.Instance),
+                    "TemperatureUnit" => throw new InvalidOperationException("Cannot add temperatures."),
+                    _ => throw new ArgumentException("Invalid measurement type.")
+                };
+            }
+            catch (Exception ex)
+            {
+                return HandleError(request, MeasurementOperation.Add, ex.Message);
+            }
+        }
+        public QuantityMeasurementDTO Convert(QuantityInputDTO request)
+        {
+            try
+            {
+                return request.thisQuantityDTO.measurementType switch
+                {
+                    "LengthUnit" => ExecuteConvert<LengthUnit>(request, LengthConverter.Instance),
+                    "VolumeUnit" => ExecuteConvert<VolumeUnit>(request, VolumeConverter.Instance),
+                    "WeightUnit" => ExecuteConvert<WeightUnit>(request, WeightConverter.Instance),
+                    "TemperatureUnit" => ExecuteConvert<TemperatureUnit>(request, TemperatureConverter.Instance),
+                    _ => throw new ArgumentException("Invalid measurement type.")
+                };
+            }
+            catch (Exception ex)
+            {
+                return HandleError(request, MeasurementOperation.Convert, ex.Message);
+            }
+        }
+        private QuantityMeasurementDTO ExecuteCompare<TUnit>(QuantityInputDTO req, IMeasurable<TUnit> converter) where TUnit : struct, Enum
+        {
+            var (q1, q2, unit1, unit2) = BuildQuantities(req, converter);
+            bool areEqual = q1.Equals(q2);
+            return SaveAndMap(req, MeasurementOperation.Compare, resultString: areEqual.ToString().ToLower());
+        }
+        private QuantityMeasurementDTO ExecuteAdd<TUnit>(QuantityInputDTO req, IMeasurable<TUnit> converter) where TUnit : struct, Enum
+        {
+            var (q1, q2, unit1, unit2) = BuildQuantities(req, converter);
+            var resultQuantity = q1.Add(q2, unit1);
+            return SaveAndMap(req, MeasurementOperation.Add, resultValue: resultQuantity.ConvertTo(unit1), resultUnit: unit1.ToString());
+        }
+        private QuantityMeasurementDTO ExecuteConvert<TUnit>(QuantityInputDTO req, IMeasurable<TUnit> converter) where TUnit : struct, Enum
+        {
+            var (q1, _, _, targetUnit) = BuildQuantities(req, converter);
+            double convertedValue = q1.ConvertTo(targetUnit);
+            return SaveAndMap(req, MeasurementOperation.Convert, resultValue: convertedValue, resultUnit: targetUnit.ToString());
+        }
+        private (Quantity<TUnit> q1, Quantity<TUnit> q2, TUnit u1, TUnit u2) BuildQuantities<TUnit>(QuantityInputDTO req, IMeasurable<TUnit> converter) where TUnit : struct, Enum
+        {
+            if (req.thisQuantityDTO.value < 0 || req.thatQuantityDTO.value < 0)
+            {
+                throw new Exception("Measurement values cannot be negative.");
+            }
+            if (!Enum.TryParse(req.thisQuantityDTO.unit, true, out TUnit unit1) || 
+                !Enum.TryParse(req.thatQuantityDTO.unit, true, out TUnit unit2))
+            {
+                throw new Exception("Invalid unit provided for the given measurement type.");
+            }
+            var q1 = new Quantity<TUnit>(req.thisQuantityDTO.value, unit1, converter);
+            var q2 = new Quantity<TUnit>(req.thatQuantityDTO.value, unit2, converter);
+            return (q1, q2, unit1, unit2);
+        }
 
-            if (!Enum.TryParse(req.TargetMeasurementUnit, true, out TUnit targetUnit))
+        private QuantityMeasurementDTO SaveAndMap(QuantityInputDTO req, MeasurementOperation action, 
+            string resultString = null, double resultValue = 0, string resultUnit = null)
+        {
+            var entity = new QuantityMeasurementEntity
             {
-                throw new InvalidMeasurementException("Invalid target unit provided.");
-            }
-            bool isTemp = typeof(TUnit) == typeof(TemperatureUnit);
-            if (isTemp && req.OperationType == MeasurementAction.Divide)
-            {
-                throw new InvalidMeasurementException("Temperature cannot be divided.");
-            }
-            Quantity<TUnit> result = req.OperationType switch
-            {
-                MeasurementAction.Add => q1.Add(q2, targetUnit),
-                MeasurementAction.Subtract => q1.Subtract(q2, targetUnit),
-                MeasurementAction.Divide => q1.Division(q2, targetUnit),
-                _ => throw new InvalidMeasurementException("Invalid operation")
+                FirstValue = req.thisQuantityDTO.value,
+                FirstUnit = req.thisQuantityDTO.unit,
+                Category = req.thisQuantityDTO.measurementType,
+                SecondValue = req.thatQuantityDTO.value,
+                SecondUnit = req.thatQuantityDTO.unit,
+                MeasurementAction = action,
+                ResultString = resultString,
+                CalculatedResult = resultValue,
+                TargetUnit = resultUnit,
+                IsError = false,
+                CreatedAt = DateTime.UtcNow
             };
-
-            string symbol = req.OperationType switch { MeasurementAction.Add => "+", MeasurementAction.Subtract => "-", _ => "/" };
-
-            return new MeasurementResponseDTO
+            _repository.SaveMeasurement(entity);
+            return new QuantityMeasurementDTO
             {
-                IsSuccess = true,
-                IsComparison = false,
-                CalculatedValue = result.ConvertTo(targetUnit),
-                FormattedMessage = $"{req.MeasurementValueFirst} {u1} {symbol} {req.MeasurementValueSecond} {u2} = {result.ConvertTo(targetUnit)} {targetUnit}"
+                thisValue = entity.FirstValue, 
+                thisUnit = entity.FirstUnit, 
+                thisMeasurementType = entity.Category,
+                
+                thatValue = entity.SecondValue, 
+                thatUnit = entity.SecondUnit, 
+                thatMeasurementType = entity.Category,
+                
+                operation = entity.MeasurementAction.ToString(), 
+                resultString = entity.ResultString, 
+                resultValue = entity.CalculatedResult,
+                resultUnit = entity.TargetUnit, 
+                resultMeasurementType = entity.Category, 
+                error = false
             };
         }
-        private void SaveToDatabase(MeasurementRequestDTO request, MeasurementResponseDTO response)
+        private QuantityMeasurementDTO HandleError(QuantityInputDTO req, MeasurementOperation action, string errorMessage)
         {
-            var entity = new MeasurementDetails
+            var entity = new QuantityMeasurementEntity
             {
-                MeasurementCategory = request.MeasurementCategory,
-                MeasurementAction = request.OperationType.ToString(),
-                MeasurementValueFirst = request.MeasurementValueFirst,
-                MeasurementUnitFirst = request.MeasurementUnitFirst,
-                MeasurementValueSecond = request.MeasurementValueSecond,
-                MeasurementUnitSecond = request.MeasurementUnitSecond,
-                TargetMeasurementUnit = request.OperationType == MeasurementAction.Compare ? null : request.TargetMeasurementUnit,
-                CalculatedResult = response.IsComparison ? null : response.CalculatedValue,
-                ComparisonResult = response.IsComparison ? response.AreEqual : null
+                FirstValue = req.thisQuantityDTO.value, 
+                FirstUnit = req.thisQuantityDTO.unit, 
+                Category = req.thisQuantityDTO.measurementType,
+                
+                SecondValue = req.thatQuantityDTO.value, 
+                SecondUnit = req.thatQuantityDTO.unit, 
+                
+                MeasurementAction = action, 
+                IsError = true, 
+                ErrorMessage = errorMessage, 
+                CreatedAt = DateTime.UtcNow
             };
 
             _repository.SaveMeasurement(entity);
+
+            return new QuantityMeasurementDTO { error = true, errorMessage = errorMessage };
+        }
+        public System.Collections.Generic.IEnumerable<QuantityMeasurementDTO> GetHistoryByType(string type)
+        {
+            var records = _repository.GetAllMeasurements()
+                .Where(m => m.Category != null && m.Category.ToLower() == type.ToLower());
+            
+            return records.Select(MapToReceiptDTO);
+        }
+        public System.Collections.Generic.IEnumerable<QuantityMeasurementDTO> GetHistoryByOperation(string operation)
+        {
+            if (Enum.TryParse<MeasurementOperation>(operation, true, out var actionEnum))
+            {
+                var records = _repository.GetAllMeasurements().Where(m => m.MeasurementAction == actionEnum);
+                return records.Select(MapToReceiptDTO);
+            }
+            return new System.Collections.Generic.List<QuantityMeasurementDTO>();
+        }
+        public System.Collections.Generic.IEnumerable<QuantityMeasurementDTO> GetErroredHistory()
+        {
+            var records = _repository.GetAllMeasurements().Where(m => m.IsError);
+            return records.Select(MapToReceiptDTO);
+        }
+        public int GetOperationCount(string operation)
+        {
+            if (Enum.TryParse<MeasurementOperation>(operation, true, out var actionEnum))
+            {
+                return _repository.GetAllMeasurements().Count(m => m.MeasurementAction == actionEnum && !m.IsError);
+            }
+            return 0;
+        }
+        private QuantityMeasurementDTO MapToReceiptDTO(QuantityMeasurementEntity entity)
+        {
+            return new QuantityMeasurementDTO
+            {
+                thisValue = entity.FirstValue, thisUnit = entity.FirstUnit, thisMeasurementType = entity.Category,
+                thatValue = entity.SecondValue, thatUnit = entity.SecondUnit, thatMeasurementType = entity.Category,
+                operation = entity.MeasurementAction.ToString(), resultString = entity.ResultString, resultValue = entity.CalculatedResult,
+                resultUnit = entity.TargetUnit, resultMeasurementType = entity.Category, 
+                error = entity.IsError, errorMessage = entity.ErrorMessage
+            };
         }
     }
 }

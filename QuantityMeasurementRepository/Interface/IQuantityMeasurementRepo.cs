@@ -4,6 +4,9 @@ namespace QuantityMeasurementRepository
 {
     public interface IQuantityMeasurementRepo
     {
-        void SaveMeasurement(MeasurementDetails entity);
+        QuantityMeasurementEntity[] GetAllMeasurements();    
+        void SaveMeasurement(QuantityMeasurementEntity entity);
+        QuantityMeasurementEntity GetMeasurementById(int id);
+        bool DeleteMeasurement(int id);
     }
 }

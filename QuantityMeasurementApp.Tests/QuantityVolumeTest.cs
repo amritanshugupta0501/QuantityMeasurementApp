@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using QuantityMeasurementModel;   
-using QuantityMeasurementService; 
+using QuantityMeasurementService;
+using QuantityMeasurementRepository;
 
 namespace QuantityMeasurementApp.Tests
 {
@@ -23,7 +24,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Volume",
-                OperationType = MeasurementAction.Compare,
+                OperationType = MeasurementOperation.Compare,
                 MeasurementValueFirst = 1.0,
                 MeasurementUnitFirst = "LITRE",
                 MeasurementValueSecond = 1000.0,
@@ -43,7 +44,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Volume",
-                OperationType = MeasurementAction.Compare,
+                OperationType = MeasurementOperation.Compare,
                 MeasurementValueFirst = 1.0,
                 MeasurementUnitFirst = "GALLON",
                 MeasurementValueSecond = 3.78541,
@@ -62,7 +63,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Volume",
-                OperationType = MeasurementAction.Add,
+                OperationType = MeasurementOperation.Add,
                 MeasurementValueFirst = 1.0,
                 MeasurementUnitFirst = "LITRE",
                 MeasurementValueSecond = 1000.0,
@@ -80,7 +81,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Volume",
-                OperationType = MeasurementAction.Subtract,
+                OperationType = MeasurementOperation.Subtract,
                 MeasurementValueFirst = 10.0,
                 MeasurementUnitFirst = "LITRE",
                 MeasurementValueSecond = 3.0,
@@ -100,7 +101,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Volume",
-                OperationType = MeasurementAction.Divide,
+                OperationType = MeasurementOperation.Divide,
                 MeasurementValueFirst = 10.0,
                 MeasurementUnitFirst = "LITRE",
                 MeasurementValueSecond = 0.0,
@@ -119,7 +120,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Volume",
-                OperationType = MeasurementAction.Add,
+                OperationType = MeasurementOperation.Add,
                 MeasurementValueFirst = -5.0, // Invalid negative value
                 MeasurementUnitFirst = "LITRE",
                 MeasurementValueSecond = 2.0,

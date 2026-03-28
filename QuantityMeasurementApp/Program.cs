@@ -8,7 +8,7 @@ namespace QuantityMeasurementApp
         static void Main(string[] args)
         {
             // Create the service
-            QuantityMeasurementController applicationController = new QuantityMeasurementController();
+            IQuantityMeasurementController applicationController = new QuantityMeasurementController();
             // Start the application
             applicationController.InitializeApplication();
             Console.WriteLine("\nPress any key to exit...");
