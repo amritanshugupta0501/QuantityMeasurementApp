@@ -2,16 +2,19 @@ using System;
 
 namespace QuantityMeasurementApp
 {
-    public class QuantityMeasurement
+    // represents a measurement of length; conversion logic lives on the unit type itself
+    public class QuantityLength
     {
         private readonly double _measurementValue;
-        private readonly MeasurementUnit _measurementUnit;
-        public QuantityMeasurement(double measurementValue, MeasurementUnit measurementUnit)
+        private readonly LengthUnit _measurementUnit;
+
+        public QuantityLength(double measurementValue, LengthUnit measurementUnit)
         {
             _measurementValue = measurementValue;
             _measurementUnit = measurementUnit;
         }
-        public static double Convert(double value, MeasurementUnit sourceUnit, MeasurementUnit targetUnit)
+
+        public static double Convert(double value, LengthUnit sourceUnit, LengthUnit targetUnit)
         {
             // value validation
             if (double.IsNaN(value) || double.IsInfinity(value))
@@ -20,35 +23,36 @@ namespace QuantityMeasurementApp
             }
 
             // unit validation
-            if (!Enum.IsDefined(typeof(MeasurementUnit), sourceUnit) ||
-                !Enum.IsDefined(typeof(MeasurementUnit), targetUnit))
+            if (!Enum.IsDefined(typeof(LengthUnit), sourceUnit) ||
+                !Enum.IsDefined(typeof(LengthUnit), targetUnit))
             {
                 throw new InvalidMeasurementException($"One or more units are not supported: {sourceUnit}, {targetUnit}");
             }
 
-            // perform conversion via the common base (inches)
-            double valueInBase = value * UnitConverter.MeasurementUnits[sourceUnit];
-            double result = valueInBase / UnitConverter.MeasurementUnits[targetUnit];
+            // perform conversion via base unit (handled by the unit type)
+            double valueInBase = sourceUnit.ToBaseUnit(value);
+            double result = targetUnit.FromBaseUnit(valueInBase);
             return result;
         }
-        public double ConvertTo(MeasurementUnit targetUnit) =>
+
+        public double ConvertTo(LengthUnit targetUnit) =>
             Convert(_measurementValue, _measurementUnit, targetUnit);
 
-        public QuantityMeasurement Add(QuantityMeasurement other)
+        public QuantityLength Add(QuantityLength other)
         {
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
 
-            // convert the other value into this unit
             double otherInThis = Convert(other._measurementValue, other._measurementUnit, _measurementUnit);
             double sum = _measurementValue + otherInThis;
-            return new QuantityMeasurement(sum, _measurementUnit);
+            return new QuantityLength(sum, _measurementUnit);
         }
-        public QuantityMeasurement Add(QuantityMeasurement other, MeasurementUnit targetUnit)
+
+        public QuantityLength Add(QuantityLength other, LengthUnit targetUnit)
         {
-            var baseSum = Add(other); // result in this unit
+            var baseSum = Add(other);
             double converted = baseSum.ConvertTo(targetUnit);
-            return new QuantityMeasurement(converted, targetUnit);
+            return new QuantityLength(converted, targetUnit);
         }
 
         public override bool Equals(object? obj)
@@ -67,6 +71,9 @@ namespace QuantityMeasurementApp
             double firstMeasurement = _measurementValue * UnitConverter.MeasurementUnits[_measurementUnit];
             double secondMeasurement = otherMeasurement._measurementValue * UnitConverter.MeasurementUnits[otherMeasurement._measurementUnit];
             // use a small tolerance to allow for floating-point imprecision
+            QuantityLength otherMeasurement = (QuantityLength)obj;
+            double firstMeasurement = _measurementValue * _measurementUnit.ToBaseUnit(1.0);
+            double secondMeasurement = otherMeasurement._measurementValue * otherMeasurement._measurementUnit.ToBaseUnit(1.0);
             const double epsilon = 1e-6;
             return Math.Abs(firstMeasurement - secondMeasurement) < epsilon;
         }
