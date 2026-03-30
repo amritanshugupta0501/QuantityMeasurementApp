@@ -24,10 +24,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Volume",
                 OperationType = MeasurementAction.Compare,
-                MeasurementValue1 = 1.0,
-                MeasurementUnit1 = "LITRE",
-                MeasurementValue2 = 1000.0,
-                MeasurementUnit2 = "MILLILITRE"
+                MeasurementValueFirst = 1.0,
+                MeasurementUnitFirst = "LITRE",
+                MeasurementValueSecond = 1000.0,
+                MeasurementUnitSecond = "MILLILITRE"
             };
 
             var response = _service.ProcessMeasurement(request);
@@ -44,10 +44,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Volume",
                 OperationType = MeasurementAction.Compare,
-                MeasurementValue1 = 1.0,
-                MeasurementUnit1 = "GALLON",
-                MeasurementValue2 = 3.78541,
-                MeasurementUnit2 = "LITRE"
+                MeasurementValueFirst = 1.0,
+                MeasurementUnitFirst = "GALLON",
+                MeasurementValueSecond = 3.78541,
+                MeasurementUnitSecond = "LITRE"
             };
             var response = _service.ProcessMeasurement(request);
             Assert.That(response.IsSuccess, Is.True);
@@ -63,10 +63,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Volume",
                 OperationType = MeasurementAction.Add,
-                MeasurementValue1 = 1.0,
-                MeasurementUnit1 = "LITRE",
-                MeasurementValue2 = 1000.0,
-                MeasurementUnit2 = "MILLILITRE",
+                MeasurementValueFirst = 1.0,
+                MeasurementUnitFirst = "LITRE",
+                MeasurementValueSecond = 1000.0,
+                MeasurementUnitSecond = "MILLILITRE",
                 TargetMeasurementUnit = "LITRE"
             };
             var response = _service.ProcessMeasurement(request);
@@ -81,10 +81,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Volume",
                 OperationType = MeasurementAction.Subtract,
-                MeasurementValue1 = 10.0,
-                MeasurementUnit1 = "LITRE",
-                MeasurementValue2 = 3.0,
-                MeasurementUnit2 = "LITRE",
+                MeasurementValueFirst = 10.0,
+                MeasurementUnitFirst = "LITRE",
+                MeasurementValueSecond = 3.0,
+                MeasurementUnitSecond = "LITRE",
                 TargetMeasurementUnit = "LITRE"
             };
 
@@ -101,10 +101,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Volume",
                 OperationType = MeasurementAction.Divide,
-                MeasurementValue1 = 10.0,
-                MeasurementUnit1 = "LITRE",
-                MeasurementValue2 = 0.0,
-                MeasurementUnit2 = "LITRE",
+                MeasurementValueFirst = 10.0,
+                MeasurementUnitFirst = "LITRE",
+                MeasurementValueSecond = 0.0,
+                MeasurementUnitSecond = "LITRE",
                 TargetMeasurementUnit = "LITRE"
             };
             var response = _service.ProcessMeasurement(request);
@@ -120,10 +120,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Volume",
                 OperationType = MeasurementAction.Add,
-                MeasurementValue1 = -5.0, // Invalid negative value
-                MeasurementUnit1 = "LITRE",
-                MeasurementValue2 = 2.0,
-                MeasurementUnit2 = "LITRE",
+                MeasurementValueFirst = -5.0, // Invalid negative value
+                MeasurementUnitFirst = "LITRE",
+                MeasurementValueSecond = 2.0,
+                MeasurementUnitSecond = "LITRE",
                 TargetMeasurementUnit = "LITRE"
             };
             var response = _service.ProcessMeasurement(request);

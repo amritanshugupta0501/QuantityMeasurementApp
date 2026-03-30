@@ -1,6 +1,6 @@
 using System;
 using QuantityMeasurementService;
-
+using QuantityMeasurementRepository;
 namespace QuantityMeasurementApp
 {
     internal class Program
@@ -8,8 +8,7 @@ namespace QuantityMeasurementApp
         static void Main(string[] args)
         {
             // Create the service
-            IQuantityMeasurementService appService = new QuantityMeasurementServices();
-            QuantityMeasurementController applicationController = new QuantityMeasurementController(appService);
+            QuantityMeasurementController applicationController = new QuantityMeasurementController();
             // Start the application
             applicationController.InitializeApplication();
             Console.WriteLine("\nPress any key to exit...");

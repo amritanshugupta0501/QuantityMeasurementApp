@@ -23,10 +23,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Temperature",
                 OperationType = MeasurementAction.Compare,
-                MeasurementValue1 = 0.0,
-                MeasurementUnit1 = "CELSIUS",
-                MeasurementValue2 = 32.0,
-                MeasurementUnit2 = "FAHRENHEIT"
+                MeasurementValueFirst = 0.0,
+                MeasurementUnitFirst = "CELSIUS",
+                MeasurementValueSecond = 32.0,
+                MeasurementUnitSecond = "FAHRENHEIT"
             };
 
             var response = _service.ProcessMeasurement(request);
@@ -43,10 +43,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Temperature",
                 OperationType = MeasurementAction.Compare,
-                MeasurementValue1 = 273.15,
-                MeasurementUnit1 = "KELVIN",
-                MeasurementValue2 = 0.0,
-                MeasurementUnit2 = "CELSIUS"
+                MeasurementValueFirst = 273.15,
+                MeasurementUnitFirst = "KELVIN",
+                MeasurementValueSecond = 0.0,
+                MeasurementUnitSecond = "CELSIUS"
             };
 
             var response = _service.ProcessMeasurement(request);
@@ -63,10 +63,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Temperature",
                 OperationType = MeasurementAction.Compare,
-                MeasurementValue1 = 212.0,
-                MeasurementUnit1 = "FAHRENHEIT",
-                MeasurementValue2 = 100.0,
-                MeasurementUnit2 = "CELSIUS"
+                MeasurementValueFirst = 212.0,
+                MeasurementUnitFirst = "FAHRENHEIT",
+                MeasurementValueSecond = 100.0,
+                MeasurementUnitSecond = "CELSIUS"
             };
 
             var response = _service.ProcessMeasurement(request);
@@ -84,10 +84,10 @@ namespace QuantityMeasurementApp.Tests
             {
                 MeasurementCategory = "Temperature",
                 OperationType = action,
-                MeasurementValue1 = 100.0,
-                MeasurementUnit1 = "CELSIUS",
-                MeasurementValue2 = 50.0,
-                MeasurementUnit2 = "CELSIUS",
+                MeasurementValueFirst = 100.0,
+                MeasurementUnitFirst = "CELSIUS",
+                MeasurementValueSecond = 50.0,
+                MeasurementUnitSecond = "CELSIUS",
                 TargetMeasurementUnit = "CELSIUS"
             };
 
