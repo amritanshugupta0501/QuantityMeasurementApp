@@ -4,6 +4,7 @@ namespace QuantityMeasurementApp
 {
     public class QuantityMeasurementServices
     {
+        // Checks if a measurement value is valid (not negative or infinity) before processing.
         public void ValidateValue(double checkValue)
         {
             if (double.IsNegative(checkValue) || double.IsInfinity(checkValue))
@@ -11,7 +12,7 @@ namespace QuantityMeasurementApp
                 throw new InvalidMeasurementException($"The measurement value {checkValue} is invalid.");
             }
         }
-
+        // Entry point that displays the main menu and directs the user to Weight, Length, or Volume categories.
         public void InitializeApplication()
         {
             try
@@ -36,7 +37,7 @@ namespace QuantityMeasurementApp
                         break;
                 }
                 Console.WriteLine("Welcome to Quantity Measurement!");
-                Console.WriteLine("Type Of Units Available : \n1. Weight\n2. Length");
+                Console.WriteLine("Type Of Units Available : \n1. Weight\n2. Length\n3. Volume");
                 if (!int.TryParse(Console.ReadLine(), out int choice))
                 {
                     Console.WriteLine("Invalid input. Please enter 1 or 2.");
@@ -44,11 +45,15 @@ namespace QuantityMeasurementApp
                 }
                 if (choice == 1)
                 {
-                    HandleWeight();
+                    HandleMeasurement<WeightUnit>("Weight", WeightConverter.Instance);
                 }
                 else if (choice == 2)
                 {
-                    HandleLength();
+                    HandleMeasurement<LengthUnit>("Length", LengthConverter.Instance);
+                }
+                else if (choice == 3)
+                {
+                    HandleMeasurement<VolumeUnit>("Volume", VolumeConverter.Instance);
                 }
                 else
                 {
@@ -61,7 +66,7 @@ namespace QuantityMeasurementApp
             }
             catch (FormatException)
             {
-                Console.WriteLine("Input Error: Please enter a valid number."); 
+                Console.WriteLine("Input Error: Please enter a valid number.");
             }
             catch (Exception ex)
             {
@@ -87,145 +92,74 @@ namespace QuantityMeasurementApp
         private void AddMeasurements(MeasurementUnit unit1, MeasurementUnit unit2)
         private void AddMeasurements(LengthUnit unit1, LengthUnit unit2)
         private void HandleLength()
+        // Manages the shared workflow for a category: showing available units, getting user selections, and choosing an operation.
+        private void HandleMeasurement<TUnit>(string categoryName, IUnitConverter<TUnit> converter) where TUnit : Enum
         {
             Console.WriteLine("1. Compare Units\n2. Add Units");
-            var choice = int.Parse(Console.ReadLine());
-            Console.WriteLine("\nAvailable Length units:");
-            var units = (LengthUnit[])Enum.GetValues(typeof(LengthUnit));
+            if (!int.TryParse(Console.ReadLine(), out int choice)) return;
+
+            Console.WriteLine($"\nAvailable {categoryName} units:");
+            var units = (TUnit[])Enum.GetValues(typeof(TUnit));
             PrintUnits(units);
+
             Console.Write("Enter the number for the first unit: ");
             int firstChoice = int.Parse(Console.ReadLine());
             Console.Write("Enter the number for the second unit: ");
             int secondChoice = int.Parse(Console.ReadLine());
 
-            if (firstChoice < 1 || firstChoice > units.Length ||
-                secondChoice < 1 || secondChoice > units.Length)
+            if (firstChoice < 1 || firstChoice > units.Length || secondChoice < 1 || secondChoice > units.Length)
             {
                 Console.WriteLine("Invalid choice input");
                 return;
             }
+
+            TUnit unit1 = units[firstChoice - 1];
+            TUnit unit2 = units[secondChoice - 1];
 
             if (choice == 1)
             {
-                CompareLengthUnits(units[firstChoice - 1], units[secondChoice - 1]);
+                CompareUnits(unit1, unit2, converter);
             }
             else if (choice == 2)
             {
-                AddLengthMeasurements(units[firstChoice - 1], units[secondChoice - 1]);
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice input.");
+                AddMeasurements(unit1, unit2, converter);
             }
         }
-
-        private void CompareLengthUnits(LengthUnit unit1, LengthUnit unit2)
-        {
-            double lenValue1 = GetValue(unit1.ToString());
-            double lenValue2 = GetValue(unit2.ToString());
-            
-            var firstLength = new Quantity<LengthUnit>(lenValue1, unit1, LengthConverter.Instance);
-            var secondLength = new Quantity<LengthUnit>(lenValue2, unit2, LengthConverter.Instance);
-            
-            bool result = firstLength.Equals(secondLength);
-            Console.WriteLine("Are the two units equal? " + result);
-        }
-
-        private void AddLengthMeasurements(LengthUnit unit1, LengthUnit unit2)
-        {
-            double lengthValue1 = GetValue(unit1.ToString());
-            double lengthValue2 = GetValue(unit2.ToString());
-            
-            var lengthFirst = new Quantity<LengthUnit>(lengthValue1, unit1, LengthConverter.Instance);
-            var lengthSecond = new Quantity<LengthUnit>(lengthValue2, unit2, LengthConverter.Instance);
-            
-            var units = (LengthUnit[])Enum.GetValues(typeof(LengthUnit));
-            Console.WriteLine("\nSelect the unit in which you want the sum to be displayed:");
-            PrintUnits(units);
-            
-            Console.Write("Enter the number for the target unit: ");
-            if (!int.TryParse(Console.ReadLine(), out int targetChoice) || 
-                targetChoice < 1 || targetChoice > units.Length)
-            {
-                Console.WriteLine("Invalid target unit choice. Operation cancelled.");
-                return;
-            }
-            
-            var targetUnit = units[targetChoice - 1];
-            var sum = lengthFirst.Add(lengthSecond, targetUnit);
-            Console.WriteLine($"\nRESULT: {lengthValue1} {unit1} plus {lengthValue2} {unit2} equals {sum.ConvertTo(targetUnit)} {targetUnit}\n");
-        }
-
-        private void HandleWeight()
-        {
-            Console.WriteLine("1. Compare Units\n2. Add Units");
-            var choice = int.Parse(Console.ReadLine());
-            Console.WriteLine("\nAvailable Weight units:");
-            var units = (WeightUnit[])Enum.GetValues(typeof(WeightUnit));
-            PrintUnits(units);
-            Console.Write("Enter the number for the first unit: ");
-            int firstChoice = int.Parse(Console.ReadLine());
-            Console.Write("Enter the number for the second unit: ");
-            int secondChoice = int.Parse(Console.ReadLine());
-
-            if (firstChoice < 1 || firstChoice > units.Length ||
-                secondChoice < 1 || secondChoice > units.Length)
-            {
-                Console.WriteLine("Invalid choice input");
-                return;
-            }
-
-            if (choice == 1)
-            {
-                CompareWeightUnits(units[firstChoice - 1], units[secondChoice - 1]);
-            }
-            else if (choice == 2)
-            {
-                AddWeightMeasurements(units[firstChoice - 1], units[secondChoice - 1]);
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice input");
-            }
-        }
-
-        private void CompareWeightUnits(WeightUnit unit1, WeightUnit unit2)
-        {
-            double weightValue1 = GetValue(unit1.ToString());
-            double weightValue2 = GetValue(unit2.ToString());
-            
-            var firstWeight = new Quantity<WeightUnit>(weightValue1, unit1, WeightConverter.Instance);
-            var secondWeight = new Quantity<WeightUnit>(weightValue2, unit2, WeightConverter.Instance);
-            
-            bool result = firstWeight.Equals(secondWeight);
-            Console.WriteLine("Are the two weights equal? " + result);
-        }
-
-        private void AddWeightMeasurements(WeightUnit unit1, WeightUnit unit2)
+        // Handles the comparison logic by creating Quantity objects and checking if they represent the same physical magnitude.
+        private void CompareUnits<TUnit>(TUnit unit1, TUnit unit2, IUnitConverter<TUnit> converter) where TUnit : Enum
         {
             double val1 = GetValue(unit1.ToString());
             double val2 = GetValue(unit2.ToString());
-            
-            var first = new Quantity<WeightUnit>(val1, unit1, WeightConverter.Instance);
-            var second = new Quantity<WeightUnit>(val2, unit2, WeightConverter.Instance);
-            
-            var units = (WeightUnit[])Enum.GetValues(typeof(WeightUnit));
-            Console.WriteLine("\nSelect the unit in which you want the sum to be displayed:");
-            PrintUnits(units);
-            
-            Console.Write("Enter the number for the target unit: ");
-            if (!int.TryParse(Console.ReadLine(), out int targetChoice) || 
-                targetChoice < 1 || targetChoice > units.Length)
-            {
-                Console.WriteLine("Invalid target unit choice. Operation cancelled.");
-                return;
-            }
-            
-            var targetUnit = units[targetChoice - 1];
-            var sum = first.Add(second, targetUnit);
-            Console.WriteLine($"\nRESULT: {val1} {unit1} plus {val2} {unit2} equals {sum.ConvertTo(targetUnit)} {targetUnit}\n");
-        }
 
+            // Creating the Quantity objects using the generic unit and converter
+            var first = new Quantity<TUnit>(val1, unit1, converter);
+            var second = new Quantity<TUnit>(val2, unit2, converter);
+
+            bool result = first.Equals(second);
+            Console.WriteLine($"Are the two units equal? {result}");
+        }
+        // Handles the addition logic by creating Quantity objects and calculating their sum in a user-specified target unit.
+        private void AddMeasurements<TUnit>(TUnit unit1, TUnit unit2, IUnitConverter<TUnit> converter) where TUnit : Enum
+        {
+            double val1 = GetValue(unit1.ToString());
+            double val2 = GetValue(unit2.ToString());
+
+            var first = new Quantity<TUnit>(val1, unit1, converter);
+            var second = new Quantity<TUnit>(val2, unit2, converter);
+
+            var units = (TUnit[])Enum.GetValues(typeof(TUnit));
+            Console.WriteLine("\nSelect the target unit for the sum:");
+            PrintUnits(units);
+
+            if (int.TryParse(Console.ReadLine(), out int targetChoice) && targetChoice >= 1 && targetChoice <= units.Length)
+            {
+                TUnit targetUnit = units[targetChoice - 1];
+                var sumQuantity = first.Add(second, targetUnit);
+
+                Console.WriteLine($"\nRESULT: {val1} {unit1} + {val2} {unit2} = {sumQuantity.ConvertTo(targetUnit)} {targetUnit}\n");
+            }
+        }
+        // Helper method that iterates through any Unit Enum to display a numbered list of choices to the user.
         private void PrintUnits<T>(T[] units) where T : Enum
         {
             for (int i = 0; i < units.Length; i++)
@@ -233,7 +167,7 @@ namespace QuantityMeasurementApp
                 Console.WriteLine($"{i + 1}. {units[i]}");
             }
         }
-
+        // Prompts the user for a numerical input, parses it, and runs the validation check.
         public double GetValue(string measurement)
         {
             Console.Write($"Give the {measurement} value: ");
