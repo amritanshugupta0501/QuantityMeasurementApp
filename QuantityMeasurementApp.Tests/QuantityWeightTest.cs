@@ -7,7 +7,7 @@ namespace QuantityMeasurementApp.Tests
     [TestFixture]
     public class QuantityWeightTests
     {
-        private readonly IUnitConverter<WeightUnit> _converter = WeightConverter.Instance;
+        private readonly IMeasurable<WeightUnit> _converter = WeightConverter.Instance;
         private const double Epsilon = 1e-6;
         // Comparison Tests 
         [Test]

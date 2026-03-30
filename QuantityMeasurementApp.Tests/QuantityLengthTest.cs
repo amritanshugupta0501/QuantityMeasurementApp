@@ -6,7 +6,7 @@ namespace QuantityMeasurementApp.Tests
     [TestFixture]
     public class QuantityLengthTests
     {
-        private readonly IUnitConverter<LengthUnit> _converter = LengthConverter.Instance;
+        private readonly IMeasurable<LengthUnit> _converter = LengthConverter.Instance;
         // Comparison Tests 
         [Test]
         public void Equals_SameValuesInDifferentUnits_ReturnsTrue()

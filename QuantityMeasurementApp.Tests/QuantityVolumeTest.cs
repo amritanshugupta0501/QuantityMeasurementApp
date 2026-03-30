@@ -6,7 +6,7 @@ namespace QuantityMeasurementApp.Tests
     [TestFixture]
     public class QuantityVolumeTests
     {
-        private readonly IUnitConverter<VolumeUnit> _converter = VolumeConverter.Instance;
+        private readonly IMeasurable<VolumeUnit> _converter = VolumeConverter.Instance;
         private const double Epsilon = 1e-5;
         // Comparison Tests
         [Test]

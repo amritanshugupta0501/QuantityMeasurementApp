@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace QuantityMeasurementApp
 {
-    public class WeightConverter : IUnitConverter<WeightUnit>
+    public class WeightConverter : IMeasurable<WeightUnit>
     {
         public static readonly WeightConverter Instance = new();
 

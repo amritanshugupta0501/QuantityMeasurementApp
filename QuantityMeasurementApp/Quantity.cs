@@ -4,9 +4,9 @@ namespace QuantityMeasurementApp
     {
         private readonly double _value;
         private readonly TUnit _unit;
-        private readonly IUnitConverter<TUnit> _converter;
+        private readonly IMeasurable<TUnit> _converter;
         // Initializes a new measurement with its numeric value, specific unit, and the required converter.
-        public Quantity(double value, TUnit unit, IUnitConverter<TUnit> converter)
+        public Quantity(double value, TUnit unit, IMeasurable<TUnit> converter)
         {
             _value = value;
             _unit = unit;
@@ -24,6 +24,12 @@ namespace QuantityMeasurementApp
             if (other == null)
             {
                 throw new ArgumentNullException(nameof(other));
+            }
+            // Check if the current generic type is TemperatureUnit
+            bool isTemperature = typeof(TUnit) == typeof(TemperatureUnit);
+            if (isTemperature && operation == ArithmeticOperation.Divide)
+            {
+                throw new InvalidOperationException("Division is not supported for Temperature measurements.");
             }
             double val1Base = _converter.ToBaseUnit(_unit, _value);
             double val2Base = _converter.ToBaseUnit(other._unit, other._value);
