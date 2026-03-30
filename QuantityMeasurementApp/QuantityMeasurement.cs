@@ -34,6 +34,17 @@ namespace QuantityMeasurementApp
         public double ConvertTo(MeasurementUnit targetUnit) =>
             Convert(_measurementValue, _measurementUnit, targetUnit);
 
+        public QuantityMeasurement Add(QuantityMeasurement other)
+        {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            // convert the other value into this unit
+            double otherInThis = Convert(other._measurementValue, other._measurementUnit, _measurementUnit);
+            double sum = _measurementValue + otherInThis;
+            return new QuantityMeasurement(sum, _measurementUnit);
+        }
+
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj))
