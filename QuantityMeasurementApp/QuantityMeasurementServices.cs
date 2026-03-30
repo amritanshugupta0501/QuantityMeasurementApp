@@ -51,7 +51,6 @@ namespace QuantityMeasurementApp
                     Console.WriteLine("Invalid choice input");
                     return;
                 }
-
                 CompareMeasurements(units[firstChoice - 1], units[secondChoice - 1]);
             }
             catch (InvalidMeasurementException ex)
@@ -60,7 +59,6 @@ namespace QuantityMeasurementApp
             }
             catch (FormatException)
             {
-                // specifically catching parse errors from Console.ReadLine()
                 Console.WriteLine("Input Error: Please enter a valid number."); 
             }
             catch (Exception ex)
@@ -74,7 +72,8 @@ namespace QuantityMeasurementApp
         private void CompareMeasurements(MeasurementUnit unit1, MeasurementUnit unit2)
         {
             double val1 = GetValue(unit1.ToString());
-            var measurement1 = new QuantityMeasurement(val1, unit1);
+            // perform conversion of the first value into the second unit
+            double converted = QuantityMeasurement.Convert(val1, unit1, unit2);
 
             double val2 = GetValue(unit2.ToString());
             var measurement2 = new QuantityMeasurement(val2, unit2);
@@ -82,6 +81,7 @@ namespace QuantityMeasurementApp
             bool areEqual = measurement1.Equals(measurement2);
             Console.WriteLine($"Are {val1} {unit1} and {val2} {unit2} equal? {areEqual}\n");
         }        
+            Console.WriteLine($"{val1} {unit1} is {converted} {unit2}\n");
         }   
 
         private void PrintUnits()
