@@ -37,6 +37,22 @@ namespace QuantityMeasurementApp
                         Console.WriteLine("Invalid choice input");
                         break;
                 }
+                Console.WriteLine("Welcome to Quantity Measurement!");
+                Console.WriteLine("Available units:");
+                PrintUnits();
+                Console.Write("Enter the number for the first unit: ");
+                int firstChoice = int.Parse(Console.ReadLine());
+                Console.Write("Enter the number for the second unit: ");
+                int secondChoice = int.Parse(Console.ReadLine());
+                var units = (MeasurementUnit[])Enum.GetValues(typeof(MeasurementUnit));
+                if (firstChoice < 1 || firstChoice > units.Length ||
+                    secondChoice < 1 || secondChoice > units.Length)
+                {
+                    Console.WriteLine("Invalid choice input");
+                    return;
+                }
+
+                CompareMeasurements(units[firstChoice - 1], units[secondChoice - 1]);
             }
             catch (InvalidMeasurementException ex)
             {
@@ -54,6 +70,7 @@ namespace QuantityMeasurementApp
         }
 
         // A new helper method that makes your switch statement incredibly clean
+        // helper method that does the work once we know which units the user wants
         private void CompareMeasurements(MeasurementUnit unit1, MeasurementUnit unit2)
         {
             double val1 = GetValue(unit1.ToString());
@@ -65,6 +82,16 @@ namespace QuantityMeasurementApp
             bool areEqual = measurement1.Equals(measurement2);
             Console.WriteLine($"Are {val1} {unit1} and {val2} {unit2} equal? {areEqual}\n");
         }        
+        }   
+
+        private void PrintUnits()
+        {
+            var units = (MeasurementUnit[])Enum.GetValues(typeof(MeasurementUnit));
+            for (int i = 0; i < units.Length; i++)
+            {
+                Console.WriteLine($"{i + 1}. {units[i]}");
+            }
+        }
         public double GetValue(string measurement)
         {
             Console.Write($"Give the {measurement} value : ");

@@ -24,6 +24,8 @@ namespace QuantityMeasurementApp
             QuantityMeasurement otherMeasurement = (QuantityMeasurement)obj;
             double firstMeasurement = _measurementValue * (double)_measurementUnit;
             double secondMeasurement = otherMeasurement._measurementValue * (double)otherMeasurement._measurementUnit;
+            double firstMeasurement = _measurementValue * UnitConverter.MeasurementUnits[_measurementUnit];
+            double secondMeasurement = otherMeasurement._measurementValue * UnitConverter.MeasurementUnits[otherMeasurement._measurementUnit];
             return firstMeasurement.Equals(secondMeasurement);
         }
     }

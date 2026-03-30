@@ -62,5 +62,36 @@ namespace QuantityMeasurementApp.Tests
             var foot = new QuantityMeasurement(1.0, MeasurementUnit.FEET);
             Assert.That(foot.Equals(foot), Is.True);
         }
+        [Test]
+        public void Given1YardAnd36InchesWhenComparedShouldReturnTrue()
+        {
+            var yard = new QuantityMeasurement(1.0, MeasurementUnit.YARD);
+            var inches = new QuantityMeasurement(36.0, MeasurementUnit.INCH);
+            Assert.That(yard.Equals(inches), Is.True);
+        }
+
+        [Test]
+        public void Given1YardAnd3FeetWhenComparedShouldReturnTrue()
+        {
+            var yard = new QuantityMeasurement(1.0, MeasurementUnit.YARD);
+            var feet = new QuantityMeasurement(3.0, MeasurementUnit.FEET);
+            Assert.That(yard.Equals(feet), Is.True);
+        }
+
+        [Test]
+        public void Given2Point54CentimetresAnd1InchWhenComparedShouldReturnTrue()
+        {
+            var cm = new QuantityMeasurement(2.54, MeasurementUnit.CENTIMETRE);
+            var inch = new QuantityMeasurement(1.0, MeasurementUnit.INCH);
+            Assert.That(cm.Equals(inch), Is.True);
+        }
+
+        [Test]
+        public void Given1CentimetreAnd1InchWhenComparedShouldReturnFalse()
+        {
+            var cm = new QuantityMeasurement(1.0, MeasurementUnit.CENTIMETRE);
+            var inch = new QuantityMeasurement(1.0, MeasurementUnit.INCH);
+            Assert.That(cm.Equals(inch), Is.False);
+        }
     }
 }
