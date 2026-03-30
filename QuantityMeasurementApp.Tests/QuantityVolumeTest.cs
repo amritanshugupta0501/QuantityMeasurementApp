@@ -7,7 +7,6 @@ namespace QuantityMeasurementApp.Tests
     public class QuantityVolumeTests
     {
         private readonly double _epsilon = 1e-5;
-        // Equality Tests
         [Test]
         public void Given1LitreAnd1Litre_WhenCompared_ShouldReturnTrue()
         {
@@ -50,7 +49,6 @@ namespace QuantityMeasurementApp.Tests
             var gallon = new Quantity<VolumeUnit>(1.0, VolumeUnit.GALLON, VolumeConverter.Instance);
             Assert.That(litre.Equals(gallon), Is.True);
         }
-        // Unit Conversion Tests 
         [Test]
         public void Convert_1LitreToMillilitre_Returns1000()
         {
@@ -75,7 +73,6 @@ namespace QuantityMeasurementApp.Tests
             var litre = new Quantity<VolumeUnit>(0.0, VolumeUnit.LITRE, VolumeConverter.Instance);
             Assert.That(litre.ConvertTo(VolumeUnit.MILLILITRE), Is.EqualTo(0.0));
         }
-        // Addition Tests
         [Test]
         public void Add_1LitreAnd2Litres_Returns3Litres()
         {
@@ -110,6 +107,51 @@ namespace QuantityMeasurementApp.Tests
             var gallon = new Quantity<VolumeUnit>(4.0, VolumeUnit.GALLON, VolumeConverter.Instance);
             var result = litre.Add(gallon, VolumeUnit.LITRE);
             Assert.That(result.ConvertTo(VolumeUnit.LITRE), Is.EqualTo(17.14164).Within(_epsilon));
+        }
+        [Test]
+        public void testSubtraction_SameUnit_LitreMinusLitre()
+        {
+            var v1 = new Quantity<VolumeUnit>(10.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+            var v2 = new Quantity<VolumeUnit>(3.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+            var result = v1.Subtract(v2, VolumeUnit.LITRE);
+            Assert.That(result.ConvertTo(VolumeUnit.LITRE), Is.EqualTo(7.0));
+        }
+        [Test]
+        public void testSubtraction_ExplicitTargetUnit_Millilitre()
+        {
+            var l1 = new Quantity<VolumeUnit>(5.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+            var l2 = new Quantity<VolumeUnit>(2.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+            var result = l1.Subtract(l2, VolumeUnit.MILLILITRE);
+            Assert.That(result.ConvertTo(VolumeUnit.MILLILITRE), Is.EqualTo(3000.0));
+        }
+        [Test]
+        public void testSubtraction_ChainedOperations()
+        {
+            var q1 = new Quantity<VolumeUnit>(10.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+            var q2 = new Quantity<VolumeUnit>(2.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+            var q3 = new Quantity<VolumeUnit>(1.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+
+            var result = q1.Subtract(q2, VolumeUnit.LITRE).Subtract(q3, VolumeUnit.LITRE);
+
+            Assert.That(result.ConvertTo(VolumeUnit.LITRE), Is.EqualTo(7.0));
+        }
+        [Test]
+        public void testDivision_SameUnit_LitreDividedByLitre()
+        {
+            var v1 = new Quantity<VolumeUnit>(10.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+            var v2 = new Quantity<VolumeUnit>(5.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+
+            var result = v1.Division(v2, VolumeUnit.LITRE);
+
+            Assert.That(result.ConvertTo(VolumeUnit.LITRE), Is.EqualTo(2.0));
+        }
+        [Test]
+        public void testDivision_ByZero()
+        {
+            var v1 = new Quantity<VolumeUnit>(10.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+            var v2 = new Quantity<VolumeUnit>(0.0, VolumeUnit.LITRE, VolumeConverter.Instance);
+            var result = v1.Division(v2, VolumeUnit.LITRE);
+            Assert.That(double.IsInfinity(result.ConvertTo(VolumeUnit.LITRE)), Is.True);
         }
     }
 }

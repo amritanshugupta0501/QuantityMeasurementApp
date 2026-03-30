@@ -47,5 +47,47 @@ namespace QuantityMeasurementApp.Tests
             var result = kg.Add(pounds, WeightUnit.KILOGRAM);
             Assert.That(result.ConvertTo(WeightUnit.KILOGRAM), Is.EqualTo(3.814369).Within(1e-5));
         }
+        [Test]
+        public void testSubtraction_WithNegativeValues()
+        {
+            var w1 = new Quantity<WeightUnit>(5.0, WeightUnit.KILOGRAM, WeightConverter.Instance);
+            var w2 = new Quantity<WeightUnit>(-2.0, WeightUnit.KILOGRAM, WeightConverter.Instance);
+            var result = w1.Subtract(w2, WeightUnit.KILOGRAM);
+            Assert.That(result.ConvertTo(WeightUnit.KILOGRAM), Is.EqualTo(7.0));
+        }
+        [Test]
+        public void testSubtraction_Immutability()
+        {
+            var w1 = new Quantity<WeightUnit>(10.0, WeightUnit.KILOGRAM, WeightConverter.Instance);
+            var w2 = new Quantity<WeightUnit>(5.0, WeightUnit.KILOGRAM, WeightConverter.Instance);
+            w1.Subtract(w2, WeightUnit.KILOGRAM);
+            Assert.That(w1.ConvertTo(WeightUnit.KILOGRAM), Is.EqualTo(10.0));
+        }
+        [Test]
+        public void testSubtraction_NullOperand()
+        {
+            var w1 = new Quantity<WeightUnit>(10.0, WeightUnit.KILOGRAM, WeightConverter.Instance);
+            Assert.Throws<ArgumentNullException>(() => w1.Subtract(null, WeightUnit.KILOGRAM));
+        }
+        [Test]
+        public void testDivision_CrossUnit_KilogramDividedByGram()
+        {
+            var kg = new Quantity<WeightUnit>(2.0, WeightUnit.KILOGRAM, WeightConverter.Instance);
+            var grams = new Quantity<WeightUnit>(2000.0, WeightUnit.GRAM, WeightConverter.Instance);
+
+            var result = kg.Division(grams, WeightUnit.KILOGRAM);
+
+            Assert.That(result.ConvertTo(WeightUnit.KILOGRAM), Is.EqualTo(1.0));
+        }
+        [Test]
+        public void testDivision_WithSmallRatio()
+        {
+            var w1 = new Quantity<WeightUnit>(1.0, WeightUnit.KILOGRAM, WeightConverter.Instance);
+            var w2 = new Quantity<WeightUnit>(1e6, WeightUnit.KILOGRAM, WeightConverter.Instance);
+
+            var result = w1.Division(w2, WeightUnit.GRAM);
+
+            Assert.That(result.ConvertTo(WeightUnit.GRAM), Is.EqualTo(1e-6).Within(1e-9));
+        }
     }
 }
