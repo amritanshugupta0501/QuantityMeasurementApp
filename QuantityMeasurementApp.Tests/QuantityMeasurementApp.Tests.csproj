@@ -13,8 +13,12 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\QuantityMeasurementApp\QuantityMeasurementApp.csproj" />
+ <ItemGroup>
+    <ProjectReference Include="..\QuantityMeasurementApp\QuantityMeasurementModel\QuantityMeasurementModel.csproj" />
+    
+    <ProjectReference Include="..\QuantityMeasurementApp\QuantityMeasurementService\QuantityMeasurementService.csproj" />
+    
+    <ProjectReference Include="..\QuantityMeasurementService\QuantityMeasurementService.csproj" />
   </ItemGroup>
 
 </Project>

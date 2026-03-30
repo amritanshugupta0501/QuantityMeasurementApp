@@ -7,8 +7,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="QuantityMeasurementApp.Tests\**" />
-    <EmbeddedResource Remove="QuantityMeasurementApp.Tests\**" />
-    <None Remove="QuantityMeasurementApp.Tests\**" />
+    <ProjectReference Include="..\QuantityMeasurementService\QuantityMeasurementService.csproj" />
+    <ProjectReference Include="..\QuantityMeasurementModel\QuantityMeasurementModel.csproj" />
   </ItemGroup>
 </Project>

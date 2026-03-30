@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-
-namespace QuantityMeasurementApp
+using QuantityMeasurementModel;
+namespace QuantityMeasurementService
 {
     public class WeightConverter : IMeasurable<WeightUnit>
     {

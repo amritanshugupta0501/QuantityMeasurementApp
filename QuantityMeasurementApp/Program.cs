@@ -1,13 +1,19 @@
-﻿using System;
+using System;
+using QuantityMeasurementService;
 
 namespace QuantityMeasurementApp
 {
-    public class Program
+    internal class Program
     {
         static void Main(string[] args)
         {
-            QuantityMeasurementServices measurementServices = new QuantityMeasurementServices();
-            measurementServices.InitializeApplication();
+            // Create the service
+            IQuantityMeasurementService appService = new QuantityMeasurementServices();
+            QuantityMeasurementController applicationController = new QuantityMeasurementController(appService);
+            // Start the application
+            applicationController.InitializeApplication();
+            Console.WriteLine("\nPress any key to exit...");
+            Console.ReadKey();
         }
     }
 }

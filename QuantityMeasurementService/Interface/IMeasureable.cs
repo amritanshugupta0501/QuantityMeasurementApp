@@ -1,4 +1,4 @@
-namespace QuantityMeasurementApp
+namespace QuantityMeasurementService
 {
     public interface IMeasurable<TUnit> where TUnit : Enum
     {

@@ -1,65 +1,134 @@
 using NUnit.Framework;
-using QuantityMeasurementApp;
+using QuantityMeasurementModel;   
+using QuantityMeasurementService; 
 
 namespace QuantityMeasurementApp.Tests
 {
     [TestFixture]
-    public class QuantityVolumeTests
+    public class QuantityMeasurementServiceVolumeTests
     {
-        private readonly IMeasurable<VolumeUnit> _converter = VolumeConverter.Instance;
+        private IQuantityMeasurementService _service;
         private const double Epsilon = 1e-5;
+
+        [SetUp]
+        public void Setup()
+        {
+            _service = new QuantityMeasurementServices();
+        }
+
         // Comparison Tests
         [Test]
-        public void Equals_LitreAndMillilitre_SameMagnitude_ReturnsTrue()
+        public void Compare_LitreAndMillilitre_SameMagnitude_ReturnsTrue()
         {
-            var litre = new Quantity<VolumeUnit>(1.0, VolumeUnit.LITRE, _converter);
-            var ml = new Quantity<VolumeUnit>(1000.0, VolumeUnit.MILLILITRE, _converter);
-            Assert.That(litre.Equals(ml), Is.True);
+            var request = new MeasurementRequestDTO
+            {
+                MeasurementCategory = "Volume",
+                OperationType = MeasurementAction.Compare,
+                MeasurementValue1 = 1.0,
+                MeasurementUnit1 = "LITRE",
+                MeasurementValue2 = 1000.0,
+                MeasurementUnit2 = "MILLILITRE"
+            };
+
+            var response = _service.ProcessMeasurement(request);
+
+            Assert.That(response.IsSuccess, Is.True);
+            Assert.That(response.IsComparison, Is.True);
+            Assert.That(response.AreEqual, Is.True);
         }
+
         [Test]
-        public void Equals_GallonAndLitre_EquivalentValues_ReturnsTrue()
+        public void Compare_GallonAndLitre_EquivalentValues_ReturnsTrue()
         {
-            var gallon = new Quantity<VolumeUnit>(1.0, VolumeUnit.GALLON, _converter);
-            var litre = new Quantity<VolumeUnit>(3.78541, VolumeUnit.LITRE, _converter);
-            Assert.That(gallon.Equals(litre), Is.True);
+            var request = new MeasurementRequestDTO
+            {
+                MeasurementCategory = "Volume",
+                OperationType = MeasurementAction.Compare,
+                MeasurementValue1 = 1.0,
+                MeasurementUnit1 = "GALLON",
+                MeasurementValue2 = 3.78541,
+                MeasurementUnit2 = "LITRE"
+            };
+            var response = _service.ProcessMeasurement(request);
+            Assert.That(response.IsSuccess, Is.True);
+            Assert.That(response.IsComparison, Is.True);
+            Assert.That(response.AreEqual, Is.True);
         }
+
         // Arithmetic Tests 
         [Test]
         public void Add_LitreAndMillilitre_ReturnsSumInLitres()
         {
-            var litre = new Quantity<VolumeUnit>(1.0, VolumeUnit.LITRE, _converter);
-            var ml = new Quantity<VolumeUnit>(1000.0, VolumeUnit.MILLILITRE, _converter);
-
-            var result = litre.Add(ml, VolumeUnit.LITRE);
-
-            Assert.That(result.ConvertTo(VolumeUnit.LITRE), Is.EqualTo(2.0).Within(Epsilon));
+            var request = new MeasurementRequestDTO
+            {
+                MeasurementCategory = "Volume",
+                OperationType = MeasurementAction.Add,
+                MeasurementValue1 = 1.0,
+                MeasurementUnit1 = "LITRE",
+                MeasurementValue2 = 1000.0,
+                MeasurementUnit2 = "MILLILITRE",
+                TargetMeasurementUnit = "LITRE"
+            };
+            var response = _service.ProcessMeasurement(request);
+            Assert.That(response.IsSuccess, Is.True);
+            Assert.That(response.CalculatedValue, Is.EqualTo(2.0).Within(Epsilon));
         }
+
         [Test]
-        public void Subtract_ChainedOperations_ReturnsCorrectRemainingVolume()
+        public void Subtract_Litres_ReturnsCorrectRemainingVolume()
         {
-            var q1 = new Quantity<VolumeUnit>(10.0, VolumeUnit.LITRE, _converter);
-            var q2 = new Quantity<VolumeUnit>(2.0, VolumeUnit.LITRE, _converter);
-            var q3 = new Quantity<VolumeUnit>(1.0, VolumeUnit.LITRE, _converter);
-            var result = q1.Subtract(q2, VolumeUnit.LITRE).Subtract(q3, VolumeUnit.LITRE);
+            var request = new MeasurementRequestDTO
+            {
+                MeasurementCategory = "Volume",
+                OperationType = MeasurementAction.Subtract,
+                MeasurementValue1 = 10.0,
+                MeasurementUnit1 = "LITRE",
+                MeasurementValue2 = 3.0,
+                MeasurementUnit2 = "LITRE",
+                TargetMeasurementUnit = "LITRE"
+            };
 
-            Assert.That(result.ConvertTo(VolumeUnit.LITRE), Is.EqualTo(7.0).Within(Epsilon));
+            var response = _service.ProcessMeasurement(request);
+
+            Assert.That(response.IsSuccess, Is.True);
+            Assert.That(response.CalculatedValue, Is.EqualTo(7.0).Within(Epsilon));
         }
+
         [Test]
         public void Division_ByZeroValue_ReturnsInfinity()
         {
-            var v1 = new Quantity<VolumeUnit>(10.0, VolumeUnit.LITRE, _converter);
-            var v2 = new Quantity<VolumeUnit>(0.0, VolumeUnit.LITRE, _converter);
-
-            var result = v1.Division(v2, VolumeUnit.LITRE);
-
-            Assert.That(double.IsInfinity(result.ConvertTo(VolumeUnit.LITRE)), Is.True);
+            var request = new MeasurementRequestDTO
+            {
+                MeasurementCategory = "Volume",
+                OperationType = MeasurementAction.Divide,
+                MeasurementValue1 = 10.0,
+                MeasurementUnit1 = "LITRE",
+                MeasurementValue2 = 0.0,
+                MeasurementUnit2 = "LITRE",
+                TargetMeasurementUnit = "LITRE"
+            };
+            var response = _service.ProcessMeasurement(request);
+            Assert.That(response.IsSuccess, Is.True);
+            Assert.That(double.IsInfinity(response.CalculatedValue), Is.True);
         }
+
         // Validation Logic
         [Test]
-        public void Arithmetic_NullOtherQuantity_ThrowsArgumentException()
+        public void Validate_NegativeVolume_ReturnsFailedDtoWithError()
         {
-            var volume = new Quantity<VolumeUnit>(5.0, VolumeUnit.LITRE, _converter);
-            Assert.Throws<ArgumentNullException>(() => volume.Add(null!, VolumeUnit.LITRE));
+            var request = new MeasurementRequestDTO
+            {
+                MeasurementCategory = "Volume",
+                OperationType = MeasurementAction.Add,
+                MeasurementValue1 = -5.0, // Invalid negative value
+                MeasurementUnit1 = "LITRE",
+                MeasurementValue2 = 2.0,
+                MeasurementUnit2 = "LITRE",
+                TargetMeasurementUnit = "LITRE"
+            };
+            var response = _service.ProcessMeasurement(request);
+            Assert.That(response.IsSuccess, Is.False);
+            Assert.That(response.ErrorMessage, Does.Contain("invalid"));
         }
     }
 }
