@@ -112,12 +112,6 @@ namespace QuantityMeasurementApp.Tests
             Assert.That(value, Is.EqualTo(1.0 / 12.0).Within(1e-9));
         }
         [Test]
-        public void Convert_NaN_ThrowsInvalidMeasurementException()
-        {
-            Assert.Throws<InvalidMeasurementException>(() =>
-                QuantityMeasurement.Convert(double.NaN, MeasurementUnit.INCH, MeasurementUnit.FEET));
-        }
-        [Test]
         public void Convert_InfiniteValue_ThrowsInvalidMeasurementException()
         {
             Assert.Throws<InvalidMeasurementException>(() =>

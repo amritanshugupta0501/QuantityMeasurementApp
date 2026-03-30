@@ -44,6 +44,12 @@ namespace QuantityMeasurementApp
             double sum = _measurementValue + otherInThis;
             return new QuantityMeasurement(sum, _measurementUnit);
         }
+        public QuantityMeasurement Add(QuantityMeasurement other, MeasurementUnit targetUnit)
+        {
+            var baseSum = Add(other); // result in this unit
+            double converted = baseSum.ConvertTo(targetUnit);
+            return new QuantityMeasurement(converted, targetUnit);
+        }
 
         public override bool Equals(object? obj)
         {
