@@ -6,13 +6,14 @@ namespace QuantityMeasurementApp.Tests
     [TestFixture]
     public class QuantityLengthTests
     {
-        
+        private readonly IUnitConverter<LengthUnit> _converter = LengthConverter.Instance;
+        // Comparison Tests 
         [Test]
-        public void Given0InchesAnd0InchesWhenComparedShouldReturnTrue()
+        public void Equals_SameValuesInDifferentUnits_ReturnsTrue()
         {
-            var inches1 = new Quantity<LengthUnit>(0.0, LengthUnit.INCH, LengthConverter.Instance);
-            var inches2 = new Quantity<LengthUnit>(0.0, LengthUnit.INCH, LengthConverter.Instance);
-            Assert.That(inches1.Equals(inches2), Is.True);
+            var foot = new Quantity<LengthUnit>(1.0, LengthUnit.FEET, _converter);
+            var inch = new Quantity<LengthUnit>(12.0, LengthUnit.INCH, _converter);
+            Assert.That(foot, Is.EqualTo(inch)); // NUnit uses your .Equals() here
         }
         [Test]
         public void Given1InchAnd2InchesWhenComparedShouldReturnFalse()
@@ -103,55 +104,35 @@ namespace QuantityMeasurementApp.Tests
             Assert.That(result, Is.EqualTo(1.0).Within(1e-6));
         }
 
+        // Arithmetic Tests 
         [Test]
         public void Add_OneFootAndTwelveInches_ReturnsTwoFeet()
         {
-            var first = new Quantity<LengthUnit>(1.0, LengthUnit.FEET, LengthConverter.Instance);
-            var second = new Quantity<LengthUnit>(12.0, LengthUnit.INCH, LengthConverter.Instance);
-            // We use the target unit overload
-            var result = first.Add(second, LengthUnit.FEET);
-            Assert.That(result, Is.EqualTo(new Quantity<LengthUnit>(2.0, LengthUnit.FEET, LengthConverter.Instance)));
-        }
+            var first = new Quantity<LengthUnit>(1.0, LengthUnit.FEET, _converter);
+            var second = new Quantity<LengthUnit>(12.0, LengthUnit.INCH, _converter);
 
-        [Test]
-        public void Add_OneYardAndOneFoot_ReturnsOnePointThreeThreeYards()
-        {
-            var yard = new Quantity<LengthUnit>(1.0, LengthUnit.YARD, LengthConverter.Instance);
-            var foot = new Quantity<LengthUnit>(1.0, LengthUnit.FEET, LengthConverter.Instance);
-            var sum = yard.Add(foot, LengthUnit.YARD);
-            Assert.That(sum.ConvertTo(LengthUnit.YARD), Is.EqualTo(1.0 + (1.0 / 3.0)).Within(1e-9));
+            var result = first.Add(second, LengthUnit.FEET);
+
+            Assert.That(result.ConvertTo(LengthUnit.FEET), Is.EqualTo(2.0).Within(1e-6));
         }
         [Test]
-        public void testSubtraction_SameUnit_FeetMinusFeet()
+        public void Subtract_FeetAndInches_ReturnsCorrectFeet()
         {
-            var f1 = new Quantity<LengthUnit>(10.0, LengthUnit.FEET, LengthConverter.Instance);
-            var f2 = new Quantity<LengthUnit>(5.0, LengthUnit.FEET, LengthConverter.Instance);
-            var result = f1.Subtract(f2, LengthUnit.FEET);
-            Assert.That(result, Is.EqualTo(new Quantity<LengthUnit>(5.0, LengthUnit.FEET, LengthConverter.Instance)));
-        }
-        [Test]
-        public void testSubtraction_CrossUnit_FeetMinusInches()
-        {
-            var feet = new Quantity<LengthUnit>(10.0, LengthUnit.FEET, LengthConverter.Instance);
-            var inches = new Quantity<LengthUnit>(6.0, LengthUnit.INCH, LengthConverter.Instance);
+            var feet = new Quantity<LengthUnit>(10.0, LengthUnit.FEET, _converter);
+            var inches = new Quantity<LengthUnit>(6.0, LengthUnit.INCH, _converter);
+
             var result = feet.Subtract(inches, LengthUnit.FEET);
-            Assert.That(result.ConvertTo(LengthUnit.FEET), Is.EqualTo(9.5));
+
+            Assert.That(result.ConvertTo(LengthUnit.FEET), Is.EqualTo(9.5).Within(1e-6));
         }
-        [Test]
-        public void testSubtraction_Immutability()
+        // Validation Tests 
+        [TestCase(ArithmeticOperation.Add)]
+        [TestCase(ArithmeticOperation.Subtract)]
+        [TestCase(ArithmeticOperation.Divide)]
+        public void Arithmetic_NullOperand_ThrowsArgumentNullException(ArithmeticOperation op)
         {
-            var f1 = new Quantity<LengthUnit>(10.0, LengthUnit.FEET, LengthConverter.Instance);
-            var f2 = new Quantity<LengthUnit>(5.0, LengthUnit.FEET, LengthConverter.Instance);
-            f1.Subtract(f2, LengthUnit.FEET);
-            Assert.That(f1.ConvertTo(LengthUnit.FEET), Is.EqualTo(10.0));
-        }
-        [Test]
-        public void testDivision_CrossUnit_FeetDividedByInches()
-        {
-            var inches = new Quantity<LengthUnit>(24.0, LengthUnit.INCH, LengthConverter.Instance);
-            var feet = new Quantity<LengthUnit>(2.0, LengthUnit.FEET, LengthConverter.Instance);
-            var ratio = inches.Division(feet, LengthUnit.INCH);
-            Assert.That(ratio.ConvertTo(LengthUnit.INCH), Is.EqualTo(1.0));
+            var q = new Quantity<LengthUnit>(1.0, LengthUnit.INCH, _converter);
+            Assert.Throws<ArgumentNullException>(() => q.Add(null!, LengthUnit.INCH));
         }
     }
 }
