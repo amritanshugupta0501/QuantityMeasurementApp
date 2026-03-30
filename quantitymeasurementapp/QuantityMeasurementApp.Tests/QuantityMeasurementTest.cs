@@ -4,6 +4,7 @@ using System;
 namespace QuantityMeasurementApp.Tests
 {
     // Test class to verify the functionality of FeetMeasurement and QuantityMeasurementServices
+    // Test class to verify the functionality of InchesMeasurement, FeetMeasurement and QuantityMeasurementServices
     [TestFixture]
     public class QuantityMeasurementTest
     {
@@ -30,6 +31,21 @@ namespace QuantityMeasurementApp.Tests
             var exception = new InvalidMeasurementException("Test");
             Assert.That(exception, Is.TypeOf<InvalidMeasurementException>());
             Assert.That(exception, Is.InstanceOf<Exception>());
+        // Test to verify that two InchesMeasurement objects with equal values are equal
+        [Test]
+        public void TwoEqualInchesMeasurementsShouldBeEqual()
+        {
+            InchesMeasurement feet1 = new InchesMeasurement(9.0);
+            InchesMeasurement feet2 = new InchesMeasurement(9.0);
+            Assert.That(feet1.Equals(feet2), Is.True);
+        }
+        // Test to verify that two InchesMeasurement objects with decimal fractional values are equal or not
+        [Test]
+        public void TwoFractionalInchesMeasurementsShouldBeEqual()
+        {
+            InchesMeasurement feet1 = new InchesMeasurement(7.5);
+            InchesMeasurement feet2 = new InchesMeasurement(5.6);
+            Assert.That(feet1.Equals(feet2), Is.False);
         }
     }
 }

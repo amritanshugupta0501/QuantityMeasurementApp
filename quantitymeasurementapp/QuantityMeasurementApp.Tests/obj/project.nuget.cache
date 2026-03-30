@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jUvfIFnLBWw=",
+  "dgSpecHash": "cyZCmKn3r1E=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Asus\\OneDrive\\Desktop\\QuantityMeasurementApp\\QuantityMeasurementApp.Tests\\QuantityMeasurementApp.Tests.csproj",
+  "projectFilePath": "c:\\Users\\Asus\\QuantityMeasurementApp\\quantitymeasurementapp\\QuantityMeasurementApp.Tests\\QuantityMeasurementApp.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Asus\\.nuget\\packages\\microsoft.applicationinsights\\2.23.0\\microsoft.applicationinsights.2.23.0.nupkg.sha512",
     "C:\\Users\\Asus\\.nuget\\packages\\microsoft.codecoverage\\17.9.0\\microsoft.codecoverage.17.9.0.nupkg.sha512",
