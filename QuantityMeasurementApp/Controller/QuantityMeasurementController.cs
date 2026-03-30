@@ -8,18 +8,15 @@ namespace QuantityMeasurementApp
     public class QuantityMeasurementController : IQuantityMeasurementController
     {
         private readonly IQuantityMeasurementService _service;
-
         public QuantityMeasurementController()
         {
             IQuantityMeasurementRepo repository = new QuantityMeasurementSQLRepository();
             _service = new QuantityMeasurementServices(repository);
         }
-
         public void InitializeApplication()
         {
             Console.WriteLine("Welcome to Quantity Measurement!");
             Console.WriteLine("Type Of Units Available : \n1. Weight\n2. Length\n3. Volume\n4. Temperature");
-
             if (!int.TryParse(Console.ReadLine(), out int choice))
             {
                 return;
@@ -30,32 +27,24 @@ namespace QuantityMeasurementApp
             {
                 return;
             }
-
             Console.WriteLine($"\n{request.MeasurementCategory} Operations");
             Console.WriteLine("1. Compare\n2. Add\n3. Subtract" + (choice != 4 ? "\n4. Divide" : ""));
             Console.Write("\nSelect Operation: ");
-            request.OperationType = (MeasurementAction)int.Parse(Console.ReadLine());
-
+            request.OperationType = (MeasurementOperation)int.Parse(Console.ReadLine());
             Console.Write("Enter First Value: ");
             request.MeasurementValueFirst = double.Parse(Console.ReadLine());
             Console.Write("Enter First Unit (e.g., FEET, KILOGRAM): ");
             request.MeasurementUnitFirst = Console.ReadLine();
-
             Console.Write("Enter Second Value: ");
             request.MeasurementValueSecond = double.Parse(Console.ReadLine());
             Console.Write("Enter Second Unit (e.g., INCH, GRAM): ");
             request.MeasurementUnitSecond = Console.ReadLine();
-
-            if (request.OperationType != MeasurementAction.Compare)
+            if (request.OperationType != MeasurementOperation.Compare)
             {
                 Console.Write("Enter Target Unit: ");
                 request.TargetMeasurementUnit = Console.ReadLine();
             }
-
-            // Ship the DTO to the Service Layer
             var response = _service.ProcessMeasurement(request);
-
-            // Display the Result
             if (!response.IsSuccess)
             {
                 Console.WriteLine($"\nError: {response.ErrorMessage}");
@@ -66,7 +55,7 @@ namespace QuantityMeasurementApp
             }
             else
             {
-                Console.WriteLine($"\nRESULT: {response.FormattedMessage}");
+                Console.WriteLine($"\nResult: {response.FormattedMessage}");
             }
         }
     }

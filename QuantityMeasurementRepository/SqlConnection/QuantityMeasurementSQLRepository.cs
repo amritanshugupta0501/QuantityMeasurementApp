@@ -1,35 +1,39 @@
-using System;
-using System.Data;
-using Microsoft.Data.SqlClient;
+using System.Linq;
 using QuantityMeasurementModel;
 
 namespace QuantityMeasurementRepository
 {
     public class QuantityMeasurementSQLRepository : IQuantityMeasurementRepo
     {
-        private readonly string _connectionString = "Server=.\\SQLEXPRESS;Database=QuantityMeasurementSystem;Trusted_Connection=True;TrustServerCertificate=True;";
-
-        public void SaveMeasurement(MeasurementDetails entity)
+        private readonly QuantityMeasurementDbContext _context;
+        public QuantityMeasurementSQLRepository(QuantityMeasurementDbContext context)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                using (SqlCommand command = new SqlCommand("spInsertMeasurement", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
+            _context = context;
+        }
 
-                    command.Parameters.AddWithValue("@Category", entity.MeasurementCategory);
-                    command.Parameters.AddWithValue("@Action", entity.MeasurementAction);
-                    command.Parameters.AddWithValue("@FirstValue", entity.MeasurementValueFirst);
-                    command.Parameters.AddWithValue("@FirstUnit", entity.MeasurementUnitFirst);
-                    command.Parameters.AddWithValue("@SecondValue", entity.MeasurementValueSecond);
-                    command.Parameters.AddWithValue("@SecondUnit", entity.MeasurementUnitSecond);
-                    command.Parameters.AddWithValue("@TargetUnit", entity.TargetMeasurementUnit ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@CalculatedResult", entity.CalculatedResult ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@ComparisonResult", entity.ComparisonResult ?? (object)DBNull.Value);
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                }
+        public void SaveMeasurement(QuantityMeasurementEntity entity)
+        {
+            _context.QuantityMeasurements.Add(entity);
+            _context.SaveChanges();
+        }
+        public QuantityMeasurementEntity[] GetAllMeasurements()
+        {
+            return _context.QuantityMeasurements.ToArray();
+        }
+        public QuantityMeasurementEntity GetMeasurementById(int id)
+        {
+            return _context.QuantityMeasurements.Find(id);
+        }
+        public bool DeleteMeasurement(int id)
+        {
+            var entity = _context.QuantityMeasurements.Find(id);
+            if (entity != null)
+            {
+                _context.QuantityMeasurements.Remove(entity);
+                _context.SaveChanges();
+                return true;
             }
+            return false;
         }
     }
 }

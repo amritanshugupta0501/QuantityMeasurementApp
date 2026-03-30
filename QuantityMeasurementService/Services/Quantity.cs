@@ -72,7 +72,6 @@ namespace QuantityMeasurementService
             }
             double firstBase = _converter.ToBaseUnit(_unit, _value);
             double secondBase = _converter.ToBaseUnit(other._unit, other._value);
-
             const double epsilon = 1e-6;
             return Math.Abs(firstBase - secondBase) < epsilon;
         }

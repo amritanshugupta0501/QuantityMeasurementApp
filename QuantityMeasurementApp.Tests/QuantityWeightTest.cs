@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using QuantityMeasurementModel;   
 using QuantityMeasurementService; 
+using QuantityMeasurementRepository;
 
 namespace QuantityMeasurementApp.Tests
 {
@@ -23,7 +24,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Weight",
-                OperationType = MeasurementAction.Compare,
+                OperationType = MeasurementOperation.Compare,
                 MeasurementValueFirst = 1.0,
                 MeasurementUnitFirst = "KILOGRAM",
                 MeasurementValueSecond = 1000.0,
@@ -41,7 +42,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Weight",
-                OperationType = MeasurementAction.Compare,
+                OperationType = MeasurementOperation.Compare,
                 MeasurementValueFirst = 1.0,
                 MeasurementUnitFirst = "POUND",
                 MeasurementValueSecond = 453.592,
@@ -60,7 +61,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Weight",
-                OperationType = MeasurementAction.Add,
+                OperationType = MeasurementOperation.Add,
                 MeasurementValueFirst = 1.0,
                 MeasurementUnitFirst = "KILOGRAM",
                 MeasurementValueSecond = 1000.0,
@@ -80,7 +81,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Weight",
-                OperationType = MeasurementAction.Subtract,
+                OperationType = MeasurementOperation.Subtract,
                 MeasurementValueFirst = 10.0,
                 MeasurementUnitFirst = "KILOGRAM",
                 MeasurementValueSecond = 5.0,
@@ -98,7 +99,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Weight",
-                OperationType = MeasurementAction.Divide,
+                OperationType = MeasurementOperation.Divide,
                 MeasurementValueFirst = 2.0,
                 MeasurementUnitFirst = "KILOGRAM",
                 MeasurementValueSecond = 2000.0,
@@ -117,7 +118,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Weight",
-                OperationType = MeasurementAction.Subtract,
+                OperationType = MeasurementOperation.Subtract,
                 MeasurementValueFirst = 10.0,
                 MeasurementUnitFirst = "KILOGRAM",
                 MeasurementValueSecond = 5.0,

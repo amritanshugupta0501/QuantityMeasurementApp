@@ -1,6 +1,7 @@
 using NUnit.Framework;
-using QuantityMeasurementModel;   
-using QuantityMeasurementService; 
+using QuantityMeasurementModel; 
+using QuantityMeasurementService;
+using QuantityMeasurementRepository;
 
 namespace QuantityMeasurementApp.Tests
 {
@@ -22,7 +23,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Temperature",
-                OperationType = MeasurementAction.Compare,
+                OperationType = MeasurementOperation.Compare,
                 MeasurementValueFirst = 0.0,
                 MeasurementUnitFirst = "CELSIUS",
                 MeasurementValueSecond = 32.0,
@@ -42,7 +43,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Temperature",
-                OperationType = MeasurementAction.Compare,
+                OperationType = MeasurementOperation.Compare,
                 MeasurementValueFirst = 273.15,
                 MeasurementUnitFirst = "KELVIN",
                 MeasurementValueSecond = 0.0,
@@ -62,7 +63,7 @@ namespace QuantityMeasurementApp.Tests
             var request = new MeasurementRequestDTO
             {
                 MeasurementCategory = "Temperature",
-                OperationType = MeasurementAction.Compare,
+                OperationType = MeasurementOperation.Compare,
                 MeasurementValueFirst = 212.0,
                 MeasurementUnitFirst = "FAHRENHEIT",
                 MeasurementValueSecond = 100.0,
@@ -75,10 +76,10 @@ namespace QuantityMeasurementApp.Tests
             Assert.That(response.IsComparison, Is.True);
             Assert.That(response.AreEqual, Is.True);
         }
-        [TestCase(MeasurementAction.Add)]
-        [TestCase(MeasurementAction.Subtract)]
-        [TestCase(MeasurementAction.Divide)]
-        public void Arithmetic_Temperatures_ReturnsFailedDto(MeasurementAction action)
+        [TestCase(MeasurementOperation.Add)]
+        [TestCase(MeasurementOperation.Subtract)]
+        [TestCase(MeasurementOperation.Divide)]
+        public void Arithmetic_Temperatures_ReturnsFailedDto(MeasurementOperation action)
         {
             var request = new MeasurementRequestDTO
             {
