@@ -7,5 +7,6 @@ namespace QuantityMeasurementService
     {
         AuthResponseDTO Register(UserRegisterDTO request);
         AuthResponseDTO Login(UserLoginDTO request);
+        AuthResponseDTO GoogleLogin(string email, string name);
     }
 }

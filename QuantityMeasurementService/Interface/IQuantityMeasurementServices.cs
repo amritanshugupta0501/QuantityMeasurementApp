@@ -8,6 +8,8 @@ namespace QuantityMeasurementService
         QuantityMeasurementDTO Add(QuantityInputDTO request);
         QuantityMeasurementDTO Compare(QuantityInputDTO request);
         QuantityMeasurementDTO Convert(QuantityInputDTO request);
+        QuantityMeasurementDTO Subtract(QuantityInputDTO request);
+        QuantityMeasurementDTO Divide(QuantityInputDTO request);
         IEnumerable<QuantityMeasurementDTO> GetHistoryByType(string type);
         IEnumerable<QuantityMeasurementDTO> GetHistoryByOperation(string operation);
         IEnumerable<QuantityMeasurementDTO> GetErroredHistory();

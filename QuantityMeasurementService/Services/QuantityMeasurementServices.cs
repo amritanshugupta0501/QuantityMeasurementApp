@@ -64,6 +64,64 @@ namespace QuantityMeasurementService
                 return HandleError(request, MeasurementOperation.Convert, ex.Message);
             }
         }
+        public QuantityMeasurementDTO Subtract(QuantityInputDTO request)
+        {
+            try
+            {
+                return request.thisQuantityDTO.measurementType switch
+                {
+                    "LengthUnit" => ExecuteSubtract<LengthUnit>(request, LengthConverter.Instance),
+                    "VolumeUnit" => ExecuteSubtract<VolumeUnit>(request, VolumeConverter.Instance),
+                    "WeightUnit" => ExecuteSubtract<WeightUnit>(request, WeightConverter.Instance),
+                    "TemperatureUnit" => throw new InvalidOperationException("Cannot subtract temperatures."),
+                    _ => throw new ArgumentException("Invalid measurement type.")
+                };
+            }
+            catch (Exception ex)
+            {
+                return HandleError(request, MeasurementOperation.Subtract, ex.Message);
+            }
+        }
+
+        public QuantityMeasurementDTO Divide(QuantityInputDTO request)
+        {
+            try
+            {
+                return request.thisQuantityDTO.measurementType switch
+                {
+                    "LengthUnit" => ExecuteDivide<LengthUnit>(request, LengthConverter.Instance),
+                    "VolumeUnit" => ExecuteDivide<VolumeUnit>(request, VolumeConverter.Instance),
+                    "WeightUnit" => ExecuteDivide<WeightUnit>(request, WeightConverter.Instance),
+                    "TemperatureUnit" => throw new InvalidOperationException("Cannot divide temperatures."),
+                    _ => throw new ArgumentException("Invalid measurement type.")
+                };
+            }
+            catch (Exception ex)
+            {
+                return HandleError(request, MeasurementOperation.Divide, ex.Message);
+            }
+        }
+
+        private QuantityMeasurementDTO ExecuteSubtract<TUnit>(QuantityInputDTO req, IMeasurable<TUnit> converter) where TUnit : struct, Enum
+        {
+            var (q1, q2, unit1, unit2) = BuildQuantities(req, converter);
+            double val2Converted = q2.ConvertTo(unit1);
+            double resultValue = req.thisQuantityDTO.value - val2Converted;
+            
+            return SaveAndMap(req, MeasurementOperation.Subtract, resultValue: resultValue, resultUnit: unit1.ToString());
+        }
+        private QuantityMeasurementDTO ExecuteDivide<TUnit>(QuantityInputDTO req, IMeasurable<TUnit> converter) where TUnit : struct, Enum
+        {
+            var (q1, q2, unit1, unit2) = BuildQuantities(req, converter);
+            
+            double val2Converted = q2.ConvertTo(unit1);
+            if (val2Converted == 0)
+            {
+                throw new DivideByZeroException("Mathematical Error: Cannot divide by zero.");
+            }
+            double resultValue = req.thisQuantityDTO.value / val2Converted;
+            return SaveAndMap(req, MeasurementOperation.Divide, resultValue: resultValue, resultUnit: "Ratio");
+        }
         private QuantityMeasurementDTO ExecuteCompare<TUnit>(QuantityInputDTO req, IMeasurable<TUnit> converter) where TUnit : struct, Enum
         {
             var (q1, q2, unit1, unit2) = BuildQuantities(req, converter);
@@ -141,18 +199,14 @@ namespace QuantityMeasurementService
                 FirstValue = req.thisQuantityDTO.value, 
                 FirstUnit = req.thisQuantityDTO.unit, 
                 Category = req.thisQuantityDTO.measurementType,
-                
                 SecondValue = req.thatQuantityDTO.value, 
                 SecondUnit = req.thatQuantityDTO.unit, 
-                
                 MeasurementAction = action, 
-                IsError = true, 
+                IsError = true,
                 ErrorMessage = errorMessage, 
                 CreatedAt = DateTime.UtcNow
             };
-
             _repository.SaveMeasurement(entity);
-
             return new QuantityMeasurementDTO { error = true, errorMessage = errorMessage };
         }
         public System.Collections.Generic.IEnumerable<QuantityMeasurementDTO> GetHistoryByType(string type)
@@ -167,7 +221,7 @@ namespace QuantityMeasurementService
             if (Enum.TryParse<MeasurementOperation>(operation, true, out var actionEnum))
             {
                 var records = _repository.GetAllMeasurements().Where(m => m.MeasurementAction == actionEnum);
-                return records.Select(MapToReceiptDTO);
+                return records.ToList().Select(MapToReceiptDTO);    
             }
             return new System.Collections.Generic.List<QuantityMeasurementDTO>();
         }
@@ -188,11 +242,19 @@ namespace QuantityMeasurementService
         {
             return new QuantityMeasurementDTO
             {
-                thisValue = entity.FirstValue, thisUnit = entity.FirstUnit, thisMeasurementType = entity.Category,
-                thatValue = entity.SecondValue, thatUnit = entity.SecondUnit, thatMeasurementType = entity.Category,
-                operation = entity.MeasurementAction.ToString(), resultString = entity.ResultString, resultValue = entity.CalculatedResult,
-                resultUnit = entity.TargetUnit, resultMeasurementType = entity.Category, 
-                error = entity.IsError, errorMessage = entity.ErrorMessage
+                thisValue = entity.FirstValue, 
+                thisUnit = entity.FirstUnit ?? "", 
+                thisMeasurementType = entity.Category ?? "",
+                thatValue = entity.SecondValue, 
+                thatUnit = entity.SecondUnit ?? "", 
+                thatMeasurementType = entity.Category ?? "",
+                operation = entity.MeasurementAction.ToString(), 
+                resultString = entity.ResultString ?? "", 
+                resultValue = entity.CalculatedResult, 
+                resultUnit = entity.TargetUnit ?? "", 
+                resultMeasurementType = entity.Category ?? "", 
+                error = entity.IsError, 
+                errorMessage = entity.ErrorMessage ?? ""
             };
         }
     }
