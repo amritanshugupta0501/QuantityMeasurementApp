@@ -5,7 +5,7 @@ namespace QuantityMeasurementModel
         public double thisValue { get; set; }
         public string thisUnit { get; set; }
         public string thisMeasurementType { get; set; }
-        public double? thatValue { get; set; }
+        public double thatValue { get; set; }
         public string thatUnit { get; set; }
         public string thatMeasurementType { get; set; }
         public string operation { get; set; }

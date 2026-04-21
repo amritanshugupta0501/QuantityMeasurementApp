@@ -1,4 +1,3 @@
-using Google.Apis.Auth;
 using Microsoft.AspNetCore.Mvc;
 using QuantityMeasurementModel;
 using QuantityMeasurementService;
@@ -42,29 +41,13 @@ namespace QuantityMeasurementApp.Controllers
                 return Unauthorized(new { error = ex.Message });
             }
         }
+        
+        // As discussed, Logout is a frontend concept, but we can provide a dummy endpoint 
+        // to return instructions if someone tries to hit it via API.
         [HttpPost("logout")]
         public IActionResult Logout()
         {
             return Ok(new { message = "To logout, please delete the JWT token from your client/browser local storage." });
-        }
-        [HttpPost("google")]
-        public async Task<IActionResult> GoogleLogin([FromBody] GoogleAuthRequest request)
-        {
-            try
-            {
-                var payload = await GoogleJsonWebSignature.ValidateAsync(request.Token, new GoogleJsonWebSignature.ValidationSettings
-            {
-                Audience = new[] { "YOUR_GOOGLE_CLIENT_ID_HERE" } 
-            });
-            string email = payload.Email;
-            string name = payload.Name;
-            var myToken = _authService.GoogleLogin(email, name);
-            return Ok(new { token = myToken.Token, message = "Google Login Successful!" });
-            }
-            catch (InvalidJwtException)
-            {
-                return Unauthorized(new { error = "Invalid Google Token." });
-            }
         }
     }
 }

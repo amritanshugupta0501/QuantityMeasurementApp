@@ -18,7 +18,7 @@ namespace QuantityMeasurementModel
         [Column("FirstUnit")]
         public string FirstUnit { get; set; }
         [Column("SecondValue")]
-        public double? SecondValue { get; set; }
+        public double SecondValue { get; set; }
         [Column("SecondUnit")]
         public string SecondUnit { get; set; }
         [Column("TargetUnit")]
