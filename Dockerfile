@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . ./
 
 
-RUN dotnet publish QuantityMeasurementApp/QuantityMeasurementApp.csproj -c Release -o out
+RUN dotnet publish QuantityMeasurementAPI/QuantityMeasurementAPI.csproj -c Release -o out
 
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
